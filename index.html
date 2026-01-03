@@ -761,7 +761,7 @@
           <div class="tagMid">OR</div>
           <div class="tagG">GOOD</div>
         </div>
-        <button class="btn" id="enterBtn">开启魔法仪式</button>
+        <button class="btn" id="enterBtn">进入 WSS2</button>
       </div>
     </div>
 
@@ -810,10 +810,9 @@
       raf();
     })();
 
-    // 进入：淡出 UI + 触发事件
+    // 进入：跳转到 WSS2 交互页面
     document.getElementById("enterBtn").addEventListener("click", () => {
-      document.body.classList.add("entered");
-      window.dispatchEvent(new CustomEvent("enter-ritual"));
+      window.location.href = "wss2.html";
     });
   </script>
 

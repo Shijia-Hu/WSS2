@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wicked 魔法问答仪式 - 艺术影像版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@200;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --elphaba: #00703C;
+            --elphaba-light: #00a859;
+            --glinda: #f896c2;
+            --glinda-light: #fbc2eb;
+            --lead: #1a1a1a; 
+            --oz-gold: #c5a059;
+            --bg-deep: #020804;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Noto Serif SC', serif; 
+            background: var(--bg-deep); 
+            color: #e2e8f0; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw;
+            touch-action: none;
+        }
+
+        /* --- 1. 环境氛围 --- */
+        .wicked-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(0, 112, 60, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(248, 150, 194, 0.2) 0%, transparent 40%),
+                linear-gradient(180deg, #051a0d 0%, #020804 100%);
+        }
+        
+        .mist {
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.1'/%3E%3C/svg%3E");
+            opacity: 0.3; pointer-events: none;
+        }
+
+        .light-beam {
+            position: absolute; top: -50%; left: 50%; width: 200px; height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+            transform: rotate(30deg); transform-origin: center;
+            animation: beamMove 15s infinite linear; pointer-events: none;
+        }
+        @keyframes beamMove { from { transform: translateX(-100vw) rotate(30deg); } to { transform: translateX(100vw) rotate(30deg); } }
+
+        /* --- 2. 彩色玻璃拱形卡片 (含图片背景适配) --- */
+        .arched-card {
+            width: 100%; height: 100%;
+            border-radius: 120px 120px 15px 15px;
+            border: 4px solid var(--lead); 
+            background: #000;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.9);
+            position: relative; overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* 图片背景层 */
+        .card-img-bg {
+            position: absolute; inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.7) contrast(1.1);
+            transition: transform 0.8s ease;
+        }
+        .arched-card:hover .card-img-bg { transform: scale(1.1); }
+
+        .glass-shards {
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L50 30 L100 0 L100 100 L0 100 Z' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M0 40 L40 60 L100 30' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M30 0 L70 100' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            opacity: 0.4; mix-blend-mode: overlay;
+            z-index: 5;
+        }
+
+        .art-nouveau-frame {
+            position: absolute; inset: 6px;
+            border: 1px solid rgba(197, 160, 89, 0.5);
+            border-radius: 115px 115px 10px 10px;
+            pointer-events: none; z-index: 10;
+        }
+
+        .view-container { 
+            position: absolute; inset: 0; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease; 
+            opacity: 0; pointer-events: none; transform: scale(0.98);
+        }
+        .view-container.active { opacity: 1; pointer-events: all; transform: scale(1); }
+
+        /* --- 3. UI 组件 --- */
+        .carousel { 
+            display: flex; gap: 40px; width: 100vw; padding: 120px 0; 
+            overflow-x: auto; scroll-snap-type: x mandatory; 
+            scrollbar-width: none; align-items: center;
+        }
+        .carousel-padding { flex: 0 0 calc(50vw - 80px); pointer-events: none; }
+        .carousel-item { flex: 0 0 160px; height: 280px; scroll-snap-align: center; position: relative; }
+
+        .btn-oz {
+            padding: 14px 45px; border: 2px solid var(--lead); 
+            background: linear-gradient(to bottom, #2a2a2a, #000);
+            color: var(--oz-gold);
+            border-radius: 40px; font-family: 'Cinzel', serif; font-size: 0.85rem;
+            letter-spacing: 0.3em; transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+        }
+        .btn-oz:hover { border-color: var(--oz-gold); box-shadow: 0 0 25px var(--oz-gold); }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 6px 16px; border-radius: 30px; font-size: 11px; color: var(--oz-gold);
+            font-family: 'Cinzel'; letter-spacing: 0.1em;
+        }
+
+        #hand-cursor {
+            position: fixed; width: 22px; height: 22px; border-radius: 50%;
+            background: #fff; z-index: 5000; pointer-events: none;
+            box-shadow: 0 0 20px #fff, 0 0 40px var(--elphaba);
+            display: none; transform: translate(-50%, -50%); mix-blend-mode: difference;
+        }
+
+        #pinch-progress {
+            position: fixed; width: 85px; height: 85px; border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.1); pointer-events: none;
+            z-index: 4999; display: none; transform: translate(-50%, -50%);
+        }
+        #pinch-bar {
+            position: absolute; inset: -2px; border-radius: 50%;
+            border: 4px solid var(--oz-gold); clip-path: inset(100% 0 0 0);
+            transition: clip-path 0.1s linear;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            border: 2px solid var(--lead);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 90%; max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wicked-bg"></div>
+    <div class="mist"></div>
+    <div class="light-beam"></div>
+    <div id="hand-cursor"></div>
+    <div id="pinch-progress"><div id="pinch-bar"></div></div>
+
+    <!-- 1. 引导页 -->
+    <div id="view-intro" class="view-container active">
+        <div class="flex flex-col items-center mb-12 text-center">
+            <div class="flex items-center gap-8 mb-6">
+                <div class="w-16 h-0.5 bg-gradient-to-r from-transparent to-[var(--elphaba)]"></div>
+                <span class="font-['Cinzel'] text-sm tracking-[0.8em] text-oz-gold uppercase">The Oracle of Oz</span>
+                <div class="w-16 h-0.5 bg-gradient-to-l from-transparent to-[var(--glinda)]"></div>
+            </div>
+            <h1 class="font-['Cinzel'] text-6xl md:text-8xl tracking-[0.5em] text-white font-bold mb-4">WICKED</h1>
+            <p id="status-text" class="status-badge mt-4">STAINED GLASS RITUAL: READY</p>
+        </div>
+        
+        <div class="flex flex-col items-center gap-6">
+            <button id="start-btn" onclick="startRitual()" class="btn-oz opacity-30 pointer-events-none">开启魔法仪式</button>
+            <button onclick="openImport()" class="opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] tracking-[0.4em] border-b border-oz-gold/30 pb-1">注入影像与卷轴</button>
+            <p id="pool-count-text" class="mt-4 text-[10px] text-zinc-600 uppercase tracking-[0.4em]">题库量: 0</p>
+        </div>
+    </div>
+
+    <!-- 2. 收集阶段 -->
+    <div id="view-gathering" class="view-container">
+        <h2 class="font-['Cinzel'] text-xl text-oz-gold mb-4 tracking-[0.5em] uppercase">The Gathering</h2>
+        <div class="flex items-center gap-6 mb-12">
+            <div class="h-1 w-64 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div id="gather-progress" class="h-full bg-white transition-all duration-700" style="width: 0%"></div>
+            </div>
+            <span id="gather-count" class="text-2xl font-bold font-['Cinzel'] text-oz-gold">0 / 16</span>
+        </div>
+        <div class="carousel" id="gatherCarousel"></div>
+    </div>
+
+    <!-- 3. 洗牌 -->
+    <div id="view-shuffling" class="view-container">
+        <h2 class="font-['Cinzel'] text-oz-gold text-2xl animate-pulse tracking-[0.4em] uppercase">Defying Gravity</h2>
+        <div id="shuffle-deck" class="relative w-48 h-72 mt-12"></div>
+    </div>
+
+    <!-- 4. 挑战阶段 -->
+    <div id="view-selection" class="view-container">
+        <h2 class="font-['Cinzel'] text-oz-gold text-xl mb-4 tracking-[0.4em] uppercase">The Challenge</h2>
+        <div class="flex gap-4 mb-8">
+            <div class="status-badge">REMAINING: <span id="round-count">16</span> / 16</div>
+            <div class="status-badge">TOTAL POOL: <span id="pool-size">0</span></div>
+        </div>
+        <div class="carousel" id="selectCarousel"></div>
+    </div>
+
+    <!-- 5. 答题面板 -->
+    <div id="view-quiz" class="view-container">
+        <div class="glass-panel p-10 md:p-16 text-center relative overflow-hidden">
+            <div class="timer-container"><div id="timer-bar"></div></div>
+            <div id="quiz-tag" class="text-[9px] mb-8 tracking-[0.6em] uppercase text-oz-gold opacity-50">Sacred Chamber</div>
+            <h3 id="quiz-text" class="text-2xl md:text-3xl mb-16 leading-relaxed font-light italic"></h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="quiz-options"></div>
+            <div id="quiz-feedback" class="mt-12 opacity-0 transition-all duration-700">
+                <p id="feedback-msg" class="text-xl font-bold tracking-widest mb-10"></p>
+                <button onclick="backToSelection()" class="btn-oz">确认并返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入弹窗 (增强版) -->
+    <div id="import-modal" class="fixed inset-0 z-[6000] hidden items-center justify-center bg-black/90 backdrop-blur-xl">
+        <div class="glass-panel p-10 w-full max-w-2xl border-2 border-oz-gold/20">
+            <h2 class="font-['Cinzel'] text-oz-gold text-2xl mb-8 tracking-widest text-center">注入影像与卷轴</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase tracking-widest mb-2">1. 上传 16 张背景图片</label>
+                    <input type="file" id="image-input" accept="image/*" multiple class="hidden">
+                    <button onclick="document.getElementById('image-input').click()" class="w-full h-32 border-2 border-dashed border-white/10 rounded-xl hover:border-oz-gold/50 flex flex-col items-center justify-center transition-all group">
+                        <span class="text-2xl group-hover:scale-125 transition-transform">🖼️</span>
+                        <span id="image-status" class="text-[9px] mt-2 opacity-40">已选择 0 / 16 张</span>
+                    </button>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase tracking-widest mb-2">2. 注入 JSON 题目</label>
+                    <textarea id="json-input" class="w-full h-32 bg-black/50 border-2 border-[var(--lead)] rounded-xl p-4 text-[10px] font-mono text-zinc-400 focus:border-oz-gold outline-none transition-all"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-8">
+                <button onclick="closeImport()" class="text-xs uppercase tracking-widest opacity-40 hover:opacity-100 px-6">取消</button>
+                <button onclick="processImport()" class="btn-oz">注入魔法</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="message-box" class="fixed inset-0 z-[7000] hidden items-center justify-center bg-black/80">
+        <div class="glass-panel p-8 max-w-sm text-center">
+            <h3 id="msg-title" class="font-['Cinzel'] text-oz-gold text-xl mb-4">Oracle</h3>
+            <p id="msg-content" class="text-sm mb-8 leading-relaxed"></p>
+            <button onclick="hideMessage()" class="btn-oz w-full">Acknowledged</button>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_POOL = [
+            {"question": "谁唱响了《Defying Gravity》？", "options": ["格琳达", "埃尔法巴", "费耶罗", "男巫"], "correct": 1},
+            {"question": "格琳达最初在希兹大学的名字？", "options": ["格琳达", "格琳迪瓦", "嘉琳达", "格洛丽亚"], "correct": 2},
+            {"question": "埃尔法巴的肤色是什么颜色的？", "options": ["粉色", "绿色", "蓝色", "金色"], "correct": 1},
+            {"question": "费耶罗在剧中变成了什么？", "options": ["狮子", "稻草人", "铁皮人", "飞猴"], "correct": 1},
+            {"question": "《Popular》是谁唱的？", "options": ["埃尔法巴", "格琳达", "费耶罗", "男巫"], "correct": 1},
+            {"question": "奥兹国的首都叫什么名字？", "options": ["翡翠城", "希兹", "芒奇金", "彩虹镇"], "correct": 0},
+            {"question": "格琳达是代表哪个方向的女巫？", "options": ["西方", "东方", "北方", "南方"], "correct": 2},
+            {"question": "男巫是通过什么来到奥兹国的？", "options": ["热气球", "飓风", "银鞋子", "魔法门"], "correct": 0},
+            {"question": "迪拉蒙教授是什么物种？", "options": ["山羊", "猴子", "狮子", "人类"], "correct": 0},
+            {"question": "埃尔法巴的妹妹叫什么？", "options": ["内莎罗丝", "格琳达", "莫里布尔", "多萝西"], "correct": 0},
+            {"question": "费耶罗最初是谁的未婚夫？", "options": ["格琳达", "埃尔法巴", "内莎", "莫里布尔"], "correct": 0},
+            {"question": "博克最后变成了什么？", "options": ["铁皮人", "稻草人", "狮子", "飞猴"], "correct": 0},
+            {"question": "格琳达最初想选修哪门课？", "options": ["咒语课", "炼金术", "魔法史", "占星术"], "correct": 0},
+            {"question": "埃尔法巴的扫帚是从哪来的？", "options": ["自带", "男巫那偷的", "莫里布尔送的", "捡到的"], "correct": 1},
+            {"question": "剧中最后格琳达对奥兹国说埃尔法巴？", "options": ["死了", "隐居了", "去冒险了", "逃跑了"], "correct": 0},
+            {"question": "《For Good》关于什么？", "options": ["友谊", "复仇", "爱情", "权力"], "correct": 0}
+        ];
+
+        let MASTER_POOL = JSON.parse(JSON.stringify(DEFAULT_POOL));
+        let SELECTED_16 = [];
+        let UPLOADED_IMAGES = [];
+        let gatheredCount = 0;
+        let currentView = 'view-intro';
+        let smoothedX = 0.5;
+        const LERP_FACTOR = 0.08; 
+        const PINCH_THRESHOLD = 0.035; 
+        let timerInterval = null;
+
+        // --- 图片处理 ---
+        document.getElementById('image-input').addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            UPLOADED_IMAGES = files.map(f => URL.createObjectURL(f));
+            safeSetText('image-status', `已选择 ${UPLOADED_IMAGES.length} / 16 张`);
+        });
+
+        function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
+        function safeToggleClass(id, className, force) { const el = document.getElementById(id); if (el) el.classList.toggle(className, force); }
+
+        function updatePoolUI() {
+            safeSetText('pool-size', MASTER_POOL.length);
+            safeSetText('pool-count-text', `题库量: ${MASTER_POOL.length}`);
+            if (MASTER_POOL.length >= 16) {
+                const btn = document.getElementById('start-btn');
+                if (btn) btn.classList.remove('opacity-30', 'pointer-events-none');
+            }
+        }
+
+        function switchView(id, callback) {
+            const cur = document.querySelector('.view-container.active');
+            if (cur) cur.classList.add('blur');
+            setTimeout(() => {
+                document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active', 'blur'));
+                const target = document.getElementById(id);
+                if (target) target.classList.add('active');
+                currentView = id;
+                if(callback) callback();
+            }, 800);
+        }
+
+        // --- 核心渲染逻辑 ---
+        function initCarouselDOM(el, isGathering = false) {
+            if (!el) return;
+            el.innerHTML = '';
+            const leftPad = document.createElement('div'); leftPad.className = 'carousel-padding'; el.appendChild(leftPad);
+
+            const items = isGathering ? Array.from({length: 32}) : SELECTED_16;
+            items.forEach((q, i) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                const card = document.createElement('div');
+                card.className = 'arched-card cursor-pointer';
+                
+                // 图片背景层
+                const imgLayer = document.createElement('div');
+                imgLayer.className = 'card-img-bg';
+                
+                if (!isGathering && UPLOADED_IMAGES[i]) {
+                    imgLayer.style.backgroundImage = `url(${UPLOADED_IMAGES[i]})`;
+                }
+
+                card.appendChild(imgLayer);
+                card.innerHTML += `<div class="glass-shards"></div><div class="art-nouveau-frame"></div><div class="glass-glow"></div>`;
+
+                if (isGathering) {
+                    const color = Math.random() > 0.5 ? 'var(--elphaba)' : 'var(--glinda)';
+                    const shard = document.createElement('div');
+                    shard.className = 'absolute inset-0 opacity-40 z-[1]';
+                    shard.style.background = `radial-gradient(circle at center, ${color} 0%, black 100%)`;
+                    card.prepend(shard);
+                    card.innerHTML += `<span class="opacity-30 text-[8px] uppercase tracking-[0.5em] cinzel text-white z-10">ENERGY</span>`;
+                    card.onclick = () => { if (isCenter(card)) performSelectionMagic(card, el, () => handleGather(color), true); };
+                } else {
+                    const color = q.soulColor;
+                    if (!UPLOADED_IMAGES[i]) { // 如果没图，用颜色渐变兜底
+                        const shard = document.createElement('div');
+                        shard.className = 'absolute inset-0 opacity-50 z-[1]';
+                        shard.style.background = `radial-gradient(circle at center, ${color} 0%, #000 100%)`;
+                        card.prepend(shard);
+                    }
+                    card.innerHTML += `
+                        <div class="z-10 flex flex-col items-center">
+                            <span class="opacity-40 text-[9px] cinzel mb-1 text-white">VESSEL</span>
+                            <span class="text-4xl font-bold cinzel text-white" style="text-shadow: 0 0 15px ${color}">${i + 1}</span>
+                        </div>
+                    `;
+                    card.onclick = () => { if (isCenter(card)) { CURRENT_PICK = q; performSelectionMagic(card, el, startQuiz, false); } };
+                }
+                item.appendChild(card);
+                el.appendChild(item);
+            });
+
+            const rightPad = document.createElement('div'); rightPad.className = 'carousel-padding'; el.appendChild(rightPad);
+            el.scrollLeft = 0; updateFisheye(el);
+        }
+
+        function isCenter(card) {
+            const rect = card.getBoundingClientRect();
+            const center = window.innerWidth / 2;
+            return Math.abs((rect.left + rect.width / 2) - center) < 120;
+        }
+
+        function updateFisheye(el) {
+            if (!el) return;
+            const items = el.querySelectorAll('.arched-card');
+            const center = window.innerWidth / 2;
+            items.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const dist = Math.abs(center - (rect.left + rect.width / 2));
+                const s = Math.max(1, 1.45 - dist / 350); 
+                const o = Math.max(0.3, 1 - dist / 450);
+                if (!card.classList.contains('card-selected-vanish')) { card.style.transform = `scale(${s})`; card.style.opacity = o; }
+                card.parentElement.style.zIndex = Math.round(s * 10);
+            });
+        }
+
+        function initMouseDrag(el) {
+            if (!el) return;
+            let isDown = false, startX, scrollLeft;
+            el.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
+            el.addEventListener('mouseleave', () => isDown = false);
+            el.addEventListener('mouseup', () => isDown = false);
+            el.addEventListener('mousemove', (e) => {
+                if(!isDown) return;
+                e.preventDefault();
+                el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
+                updateFisheye(el);
+            });
+            el.addEventListener('scroll', () => updateFisheye(el));
+        }
+
+        function startRitual() {
+            gatheredCount = 0; SELECTED_16 = [];
+            switchView('view-gathering', () => { 
+                const el = document.getElementById('gatherCarousel');
+                initCarouselDOM(el, true);
+                initMouseDrag(el);
+            });
+        }
+
+        function performSelectionMagic(element, carousel, onComplete, shouldRemove = false) {
+            if (carousel.classList.contains('focus-mode')) return;
+            carousel.classList.add('focus-mode');
+            element.classList.add('card-selected-vanish');
+            setTimeout(() => {
+                carousel.classList.remove('focus-mode');
+                if (shouldRemove) element.parentElement.remove();
+                else element.classList.remove('card-selected-vanish');
+                onComplete();
+            }, 900);
+        }
+
+        function handleGather(color) {
+            if(gatheredCount >= 16) return;
+            gatheredCount++;
+            safeSetText('gather-count', `${gatheredCount} / 16`);
+            const prog = document.getElementById('gather-progress');
+            if (prog) {
+                prog.style.width = `${(gatheredCount/16)*100}%`;
+                prog.style.backgroundColor = `var(${color.includes('elphaba') ? '--elphaba' : '--glinda'})`;
+            }
+            const ridx = Math.floor(Math.random() * MASTER_POOL.length);
+            const q = JSON.parse(JSON.stringify(MASTER_POOL[ridx]));
+            q.soulColor = color;
+            q.uid = Date.now() + Math.random();
+            SELECTED_16.push(q);
+            if(gatheredCount === 16) setTimeout(() => switchView('view-shuffling', startShuffle), 400);
+        }
+
+        function startShuffle() {
+            const deck = document.getElementById('shuffle-deck');
+            if (!deck) return;
+            deck.innerHTML = '';
+            for(let i=0; i<15; i++) {
+                const c = document.createElement('div');
+                c.className = 'absolute inset-0 arched-card';
+                c.style.borderColor = 'var(--lead)';
+                c.style.transform = `translate(${(Math.random()-0.5)*200}px, ${(Math.random()-0.5)*150}px) rotate(${(Math.random()-0.5)*80}deg) scale(0.7)`;
+                deck.appendChild(c);
+            }
+            setTimeout(() => { const el = document.getElementById('selectCarousel'); initCarouselDOM(el, false); initMouseDrag(el); switchView('view-selection'); }, 3000);
+        }
+
+        function startQuiz() {
+            safeSetText('quiz-text', CURRENT_PICK.question);
+            safeSetText('quiz-tag', `CHAMBER #${Math.floor(CURRENT_PICK.uid % 10000)}`);
+            const opts = document.getElementById('quiz-options');
+            if (opts) {
+                opts.innerHTML = '';
+                CURRENT_PICK.options.forEach((opt, i) => {
+                    const b = document.createElement('button');
+                    b.className = 'quiz-opt-btn w-full py-6 px-8 bg-white/5 border-2 border-[var(--lead)] rounded-2xl hover:bg-white/10 hover:border-oz-gold transition-all text-left text-sm outline-none active:scale-95 cinzel tracking-widest';
+                    b.innerText = opt; b.onclick = () => checkAnswer(i); opts.appendChild(b);
+                });
+            }
+            const f = document.getElementById('quiz-feedback'); if (f) f.style.opacity = '0';
+            switchView('view-quiz', initTimer);
+        }
+
+        function initTimer() {
+            let t = 20; const bar = document.getElementById('timer-bar');
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => { t -= 0.1; if (bar) bar.style.width = `${(t/20)*100}%`; if (t <= 0) { clearInterval(timerInterval); handleTimeout(); } }, 100);
+        }
+
+        function handleTimeout() {
+            const f = document.getElementById('quiz-feedback');
+            document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
+            const m = document.getElementById('feedback-msg');
+            if (m) { m.innerText = "MAGIC DEPLETED! THE SEAL REMAINS."; m.style.color = "var(--glinda)"; }
+            if (f) f.style.opacity = '1';
+        }
+
+        function checkAnswer(idx) {
+            clearInterval(timerInterval);
+            const f = document.getElementById('quiz-feedback'); const m = document.getElementById('feedback-msg');
+            document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
+            if(idx === CURRENT_PICK.correct) {
+                if (m) { m.innerText = "POPULAR! THE ENERGY IS RELEASED."; m.style.color = "var(--elphaba)"; }
+                MASTER_POOL = MASTER_POOL.filter(q => q.question !== CURRENT_PICK.question);
+                SELECTED_16 = SELECTED_16.filter(q => q.uid !== CURRENT_PICK.uid);
+            } else {
+                if (m) { m.innerText = "FAILED. THE SEAL IS RETIGHTENED."; m.style.color = "var(--glinda)"; }
+            }
+            if (f) f.style.opacity = '1';
+        }
+
+        function backToSelection() {
+            if(SELECTED_16.length === 0) {
+                if(MASTER_POOL.length === 0) showMessage("VICTORY", "ALL RIDDLES ARE SOLVED.");
+                else { showMessage("ROUND ENDED", "THE ENERGY HAS FADED. GATHER MORE."); setTimeout(startRitual, 2000); }
+            } else { const el = document.getElementById('selectCarousel'); initCarouselDOM(el, false); switchView('view-selection'); }
+            updatePoolUI();
+        }
+
+        function openImport() { document.getElementById('import-modal').style.display = 'flex'; }
+        function closeImport() { document.getElementById('import-modal').style.display = 'none'; }
+        function showMessage(t, c) { safeSetText('msg-title', t); safeSetText('msg-content', c); document.getElementById('message-box').style.display = 'flex'; }
+        function hideMessage() { document.getElementById('message-box').style.display = 'none'; }
+        
+        function processImport() {
+            const input = document.getElementById('json-input');
+            if (!input) return;
+            try {
+                const data = JSON.parse(input.value.trim());
+                if (Array.isArray(data) && data.length >= 16) {
+                    MASTER_POOL = data.map((item, index) => ({ id: Date.now() + index, question: item.question, options: item.options, correct: item.correct }));
+                    updatePoolUI(); closeImport(); showMessage("SUCCESS", "SCROLL INJECTED.");
+                } else showMessage("FAILED", "NEED 16+ ITEMS.");
+            } catch (e) { showMessage("ERROR", "CORRUPTED SCROLL."); }
+        }
+
+        async function initMediaPipe() {
+            if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
+            try {
+                const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
+                hands.onResults(res => {
+                    const cursor = document.getElementById('hand-cursor'), prog = document.getElementById('pinch-progress');
+                    if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
+                        const marks = res.multiHandLandmarks[0];
+                        smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
+                        if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${marks[9].y * window.innerHeight}px`; }
+                        if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
+                        const ac = document.querySelector('.view-container.active .carousel');
+                        if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                        const dist = Math.sqrt(Math.pow(marks[4].x-marks[8].x,2) + Math.pow(marks[4].y-marks[8].y,2));
+                        if (dist < PINCH_THRESHOLD) {
+                            if (pinchStart === 0) pinchStart = Date.now();
+                            const p = Math.min(1, (Date.now() - pinchStart) / PINCH_TIME);
+                            const bar = document.getElementById('pinch-bar');
+                            if (bar) bar.style.clipPath = `inset(${100 - p * 100}% 0 0 0)`;
+                            if (p >= 1) { handleConfirm(); pinchStart = 0; if (prog) prog.style.display = 'none'; }
+                        } else { pinchStart = 0; const bar = document.getElementById('pinch-bar'); if (bar) bar.style.clipPath = `inset(100% 0 0 0)`; }
+                    } else { if (cursor) cursor.style.display = 'none'; if (prog) prog.style.display = 'none'; }
+                });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.onloadedmetadata = () => { video.play(); safeSetText('status-text', "CONSTELLATIONS ALIGNED: READY"); const update = async () => { try { await hands.send({ image: video }); } catch(e) {} requestAnimationFrame(update); }; update(); };
+            } catch (err) { safeSetText('status-text', "CAMERA NOT DETECTED"); }
+        }
+
+        function handleConfirm() {
+            const el = document.querySelector('.view-container.active .carousel');
+            if(!el) return;
+            const center = window.innerWidth / 2;
+            const items = el.querySelectorAll('.arched-card');
+            let closest = null, minDist = Infinity;
+            items.forEach(it => {
+                const rect = it.getBoundingClientRect();
+                const d = Math.abs((rect.left + rect.width / 2) - center);
+                if(d < minDist) { minDist = d; closest = it; }
+            });
+            if(closest && minDist < 120) closest.click();
+        }
+
+        window.onload = () => { updatePoolUI(); initMediaPipe(); };
+    </script>
+</body>
+</html>
