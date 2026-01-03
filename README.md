@@ -16,8 +16,9 @@ npm run build
 npm run preview
 ```
 
-> **Note:** If you want to run Vite directly, use `npx vite build` (or install Vite
-> globally). Running `vite build` without `npx` requires `vite` to be on your PATH.
+> **Note:** If you want to run Vite directly, use `npm exec -- vite build` or
+> `npx vite build` (or install Vite globally). Running `vite build` without those
+> requires `vite` to be on your PATH.
 
 ## Deploy
 

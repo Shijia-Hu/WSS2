@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
+    "build": "npm exec -- vite build",
     "preview": "vite preview",
-    "test": "npm run build"
+    "test": "npm exec -- vite build"
   },
   "devDependencies": {
     "vite": "^5.0.0"
