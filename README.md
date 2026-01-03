@@ -16,6 +16,9 @@ npm run build
 npm run preview
 ```
 
+> **Note:** If you want to run Vite directly, use `npx vite build` (or install Vite
+> globally). Running `vite build` without `npx` requires `vite` to be on your PATH.
+
 ## Deploy
 
 This project is configured to deploy to GitHub Pages from the `main` branch.
