@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm exec -- vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "test": "npm exec -- vite build"
+    "test": "npm run build"
   },
-  "devDependencies": {
+  "dependencies": {
     "vite": "^5.0.0"
   }
 }
