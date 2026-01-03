@@ -18,6 +18,7 @@ npm run preview
 
 ## Project structure
 
-- `index.html` — main entry point (WSS2 interaction experience).
+- `index.html` — preview landing page that links into the WSS2 experience.
+- `wss2.html` — main WSS2 interaction experience.
 - `public/assets/` — static image assets referenced by the page.
 - `archive/` — legacy HTML exports kept for reference.
