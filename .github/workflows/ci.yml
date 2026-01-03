@@ -14,5 +14,10 @@ jobs:
         with:
           node-version: 20
           cache: npm
+
+      - run: node -v && npm -v
+      - run: ls -la
+      - run: cat package.json
       - run: npm ci
+      - run: npm ls vite || true
       - run: npm test
