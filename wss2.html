@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wicked 魔法问答仪式 - 艺术影像版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@200;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/wss2.css">
+</head>
+<body>
+    <div class="wicked-bg"></div>
+    <div class="mist"></div>
+    <div class="light-beam"></div>
+    <div id="hand-cursor"></div>
+    <div id="pinch-progress"><div id="pinch-bar"></div></div>
+
+    <!-- 1. 引导页 -->
+    <div id="view-intro" class="view-container active">
+        <div class="flex flex-col items-center mb-12 text-center">
+            <div class="flex items-center gap-8 mb-6">
+                <div class="w-16 h-0.5 bg-gradient-to-r from-transparent to-[var(--elphaba)]"></div>
+                <span class="font-['Cinzel'] text-sm tracking-[0.8em] text-oz-gold uppercase">The Oracle of Oz</span>
+                <div class="w-16 h-0.5 bg-gradient-to-l from-transparent to-[var(--glinda)]"></div>
+            </div>
+            <h1 class="font-['Cinzel'] text-6xl md:text-8xl tracking-[0.5em] text-white font-bold mb-4">WICKED</h1>
+            <p id="status-text" class="status-badge mt-4">STAINED GLASS RITUAL: READY</p>
+        </div>
+        
+        <div class="flex flex-col items-center gap-6">
+            <button id="start-btn" onclick="startRitual()" class="btn-oz opacity-30 pointer-events-none">开启魔法仪式</button>
+            <button onclick="openImport()" class="opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] tracking-[0.4em] border-b border-oz-gold/30 pb-1">注入影像与卷轴</button>
+            <p id="pool-count-text" class="mt-4 text-[10px] text-zinc-600 uppercase tracking-[0.4em]">题库量: 0</p>
+        </div>
+    </div>
+
+    <!-- 2. 收集阶段 -->
+    <div id="view-gathering" class="view-container">
+        <h2 class="font-['Cinzel'] text-xl text-oz-gold mb-4 tracking-[0.5em] uppercase">The Gathering</h2>
+        <div class="flex items-center gap-6 mb-12">
+            <div class="h-1 w-64 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div id="gather-progress" class="h-full bg-white transition-all duration-700" style="width: 0%"></div>
+            </div>
+            <span id="gather-count" class="text-2xl font-bold font-['Cinzel'] text-oz-gold">0 / 16</span>
+        </div>
+        <div class="carousel" id="gatherCarousel"></div>
+    </div>
+
+    <!-- 3. 洗牌 -->
+    <div id="view-shuffling" class="view-container">
+        <h2 class="font-['Cinzel'] text-oz-gold text-2xl animate-pulse tracking-[0.4em] uppercase">Defying Gravity</h2>
+        <div id="shuffle-deck" class="relative w-48 h-72 mt-12"></div>
+    </div>
+
+    <!-- 4. 挑战阶段 -->
+    <div id="view-selection" class="view-container">
+        <h2 class="font-['Cinzel'] text-oz-gold text-xl mb-4 tracking-[0.4em] uppercase">The Challenge</h2>
+        <div class="flex gap-4 mb-8">
+            <div class="status-badge">REMAINING: <span id="round-count">16</span> / 16</div>
+            <div class="status-badge">TOTAL POOL: <span id="pool-size">0</span></div>
+        </div>
+        <div class="carousel" id="selectCarousel"></div>
+    </div>
+
+    <!-- 5. 答题面板 -->
+    <div id="view-quiz" class="view-container">
+        <div class="glass-panel p-10 md:p-16 text-center relative overflow-hidden">
+            <div class="timer-container"><div id="timer-bar"></div></div>
+            <div id="quiz-tag" class="text-[9px] mb-8 tracking-[0.6em] uppercase text-oz-gold opacity-50">Sacred Chamber</div>
+            <h3 id="quiz-text" class="text-2xl md:text-3xl mb-16 leading-relaxed font-light italic"></h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="quiz-options"></div>
+            <div id="quiz-feedback" class="mt-12 opacity-0 transition-all duration-700">
+                <p id="feedback-msg" class="text-xl font-bold tracking-widest mb-10"></p>
+                <button onclick="backToSelection()" class="btn-oz">确认并返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入弹窗 (增强版) -->
+    <div id="import-modal" class="fixed inset-0 z-[6000] hidden items-center justify-center bg-black/90 backdrop-blur-xl">
+        <div class="glass-panel p-10 w-full max-w-2xl border-2 border-oz-gold/20">
+            <h2 class="font-['Cinzel'] text-oz-gold text-2xl mb-8 tracking-widest text-center">注入影像与卷轴</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase tracking-widest mb-2">1. 上传 16 张背景图片</label>
+                    <input type="file" id="image-input" accept="image/*" multiple class="hidden">
+                    <button onclick="document.getElementById('image-input').click()" class="w-full h-32 border-2 border-dashed border-white/10 rounded-xl hover:border-oz-gold/50 flex flex-col items-center justify-center transition-all group">
+                        <span class="text-2xl group-hover:scale-125 transition-transform">🖼️</span>
+                        <span id="image-status" class="text-[9px] mt-2 opacity-40">已选择 0 / 16 张</span>
+                    </button>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase tracking-widest mb-2">2. 注入 JSON 题目</label>
+                    <textarea id="json-input" class="w-full h-32 bg-black/50 border-2 border-[var(--lead)] rounded-xl p-4 text-[10px] font-mono text-zinc-400 focus:border-oz-gold outline-none transition-all"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-8">
+                <button onclick="closeImport()" class="text-xs uppercase tracking-widest opacity-40 hover:opacity-100 px-6">取消</button>
+                <button onclick="processImport()" class="btn-oz">注入魔法</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="message-box" class="fixed inset-0 z-[7000] hidden items-center justify-center bg-black/80">
+        <div class="glass-panel p-8 max-w-sm text-center">
+            <h3 id="msg-title" class="font-['Cinzel'] text-oz-gold text-xl mb-4">Oracle</h3>
+            <p id="msg-content" class="text-sm mb-8 leading-relaxed"></p>
+            <button onclick="hideMessage()" class="btn-oz w-full">Acknowledged</button>
+        </div>
+    </div>
+
+    <script src="/scripts/wss2.js" defer></script>
+</body>
+</html>
