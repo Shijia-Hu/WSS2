@@ -16,6 +16,9 @@ npm run build
 npm run preview
 ```
 
+`npm run build` is the recommended build command. You can also run `npx vite build`
+directly if you want to invoke Vite without npm scripts.
+
 ## Deploy
 
 This project is configured to deploy to GitHub Pages from the `main` branch.

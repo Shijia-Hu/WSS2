@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "npm run build"
   },
-  "devDependencies": {
+  "dependencies": {
     "vite": "^5.0.0"
   }
 }
