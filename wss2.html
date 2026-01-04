@@ -11,7 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@200;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="./src/styles/wss2.css">
+    <link rel="stylesheet" href="/src/styles/wss2.css">
 </head>
 
 <body>
@@ -36,8 +36,8 @@
         </div>
 
         <div class="flex flex-col items-center gap-6">
-            <button id="start-btn" onclick="startRitual()" class="btn-oz opacity-30 pointer-events-none">开启魔法仪式</button>
-            <button onclick="openImport()"
+            <button id="start-btn" class="btn-oz opacity-30 pointer-events-none">开启魔法仪式</button>
+            <button data-action="openImport"
                 class="opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] tracking-[0.4em] border-b border-oz-gold/30 pb-1">注入影像与卷轴</button>
             <p id="pool-count-text" class="mt-4 text-[10px] text-zinc-600 uppercase tracking-[0.4em]">题库量: 0</p>
         </div>
@@ -83,7 +83,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="quiz-options"></div>
             <div id="quiz-feedback" class="mt-12 opacity-0 transition-all duration-700">
                 <p id="feedback-msg" class="text-xl font-bold tracking-widest mb-10"></p>
-                <button onclick="backToSelection()" class="btn-oz">确认并返回</button>
+                <button data-action="backToSelection" class="btn-oz">确认并返回</button>
             </div>
         </div>
     </div>
@@ -112,9 +112,9 @@
             </div>
 
             <div class="flex justify-center gap-8">
-                <button onclick="closeImport()"
+                <button data-action="closeImport()"
                     class="text-xs uppercase tracking-widest opacity-40 hover:opacity-100 px-6">取消</button>
-                <button onclick="processImport()" class="btn-oz">注入魔法</button>
+                <button data-action="processImport()" class="btn-oz">注入魔法</button>
             </div>
         </div>
     </div>
@@ -124,7 +124,7 @@
         <div class="glass-panel p-8 max-w-sm text-center">
             <h3 id="msg-title" class="font-['Cinzel'] text-oz-gold text-xl mb-4">Oracle</h3>
             <p id="msg-content" class="text-sm mb-8 leading-relaxed"></p>
-            <button onclick="hideMessage()" class="btn-oz w-full">Acknowledged</button>
+            <button data-action="hideMessage()" class="btn-oz w-full">Acknowledged</button>
         </div>
     </div>
 
