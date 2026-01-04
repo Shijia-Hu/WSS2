@@ -42,6 +42,7 @@ function replayOneTeam(teamId, auto, memberDelay = 950, teamHold = 550) {
 
 // 统一指令入口：无论来自 host 还是键盘，都走这里
 const COMMAND_HANDLERS = {
+    PROCESS: (payload) => director.showProcess(payload.processId),
     TEAMS_INTRO_START: (payload) => startAllTeamsIntro(payload?.auto !== false),
     TEAMS_INTRO_NEXT: () => teamIntro.next(),
     TEAMS_INTRO_STOP: () => teamIntro.stop(),
@@ -76,10 +77,10 @@ window.addEventListener("keydown", (e) => {
     const k = e.key.toLowerCase();
 
     // 1~4：各轮串词开场
-    if (e.key === "1") return applyCommand("ROUND_INTRO", { roundId: "r1" });
-    if (e.key === "2") return applyCommand("ROUND_INTRO", { roundId: "r2" });
-    if (e.key === "3") return applyCommand("ROUND_INTRO", { roundId: "r3" });
-    if (e.key === "4") return applyCommand("ROUND_INTRO", { roundId: "r4" });
+    if (e.key === "1" && !e.ctrlKey && !e.altKey) return applyCommand("ROUND_INTRO", { roundId: "r1" });
+    if (e.key === "2" && !e.ctrlKey && !e.altKey) return applyCommand("ROUND_INTRO", { roundId: "r2" });
+    if (e.key === "3" && !e.ctrlKey && !e.altKey) return applyCommand("ROUND_INTRO", { roundId: "r3" });
+    if (e.key === "4" && !e.ctrlKey && !e.altKey) return applyCommand("ROUND_INTRO", { roundId: "r4" });
 
     // Shift+1~4：各轮封印仪式
     if (e.shiftKey && e.key === "1") return applyCommand("SEAL", { roundId: "r1", winner: "本轮胜队" });
@@ -92,6 +93,20 @@ window.addEventListener("keydown", (e) => {
 
     // F：最终反转
     if (k === "f") return applyCommand("FINAL");
+
+    // 7~0：流程卡片
+    if (e.key === "7") return applyCommand("PROCESS", { processId: "p7" });
+    if (e.key === "8") return applyCommand("PROCESS", { processId: "p8" });
+    if (e.key === "9") return applyCommand("PROCESS", { processId: "p9" });
+    if (e.key === "0") return applyCommand("PROCESS", { processId: "p10" });
+
+    // Ctrl/Alt + 1~6：流程卡片（避免与 R1~R4 冲突）
+    if ((e.ctrlKey || e.altKey) && e.key === "1") return applyCommand("PROCESS", { processId: "p1" });
+    if ((e.ctrlKey || e.altKey) && e.key === "2") return applyCommand("PROCESS", { processId: "p2" });
+    if ((e.ctrlKey || e.altKey) && e.key === "3") return applyCommand("PROCESS", { processId: "p3" });
+    if ((e.ctrlKey || e.altKey) && e.key === "4") return applyCommand("PROCESS", { processId: "p4" });
+    if ((e.ctrlKey || e.altKey) && e.key === "5") return applyCommand("PROCESS", { processId: "p5" });
+    if ((e.ctrlKey || e.altKey) && e.key === "6") return applyCommand("PROCESS", { processId: "p6" });
 });
 
 

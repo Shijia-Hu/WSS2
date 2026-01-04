@@ -81,6 +81,16 @@ document.body.addEventListener("click", (e) => {
     if (cmd === "r2") return send("ROUND_INTRO", { roundId: "r2" });
     if (cmd === "r3") return send("ROUND_INTRO", { roundId: "r3" });
     if (cmd === "r4") return send("ROUND_INTRO", { roundId: "r4" });
+    if (cmd === "process1") return send("PROCESS", { processId: "p1" });
+    if (cmd === "process2") return send("PROCESS", { processId: "p2" });
+    if (cmd === "process3") return send("PROCESS", { processId: "p3" });
+    if (cmd === "process4") return send("PROCESS", { processId: "p4" });
+    if (cmd === "process5") return send("PROCESS", { processId: "p5" });
+    if (cmd === "process6") return send("PROCESS", { processId: "p6" });
+    if (cmd === "process7") return send("PROCESS", { processId: "p7" });
+    if (cmd === "process8") return send("PROCESS", { processId: "p8" });
+    if (cmd === "process9") return send("PROCESS", { processId: "p9" });
+    if (cmd === "process10") return send("PROCESS", { processId: "p10" });
 
     if (cmd === "seal1") return send("SEAL", { roundId: "r1", winner: win });
     if (cmd === "seal2") return send("SEAL", { roundId: "r2", winner: win });
@@ -102,10 +112,10 @@ window.addEventListener("keydown", (e) => {
     if (k === "n") return send("TEAMS_INTRO_NEXT");
     if (k === "x") return send("TEAMS_INTRO_STOP");
 
-    if (e.key === "1" && !e.shiftKey) return send("ROUND_INTRO", { roundId: "r1" });
-    if (e.key === "2" && !e.shiftKey) return send("ROUND_INTRO", { roundId: "r2" });
-    if (e.key === "3" && !e.shiftKey) return send("ROUND_INTRO", { roundId: "r3" });
-    if (e.key === "4" && !e.shiftKey) return send("ROUND_INTRO", { roundId: "r4" });
+    if (e.key === "1" && !e.shiftKey && !e.ctrlKey && !e.altKey) return send("ROUND_INTRO", { roundId: "r1" });
+    if (e.key === "2" && !e.shiftKey && !e.ctrlKey && !e.altKey) return send("ROUND_INTRO", { roundId: "r2" });
+    if (e.key === "3" && !e.shiftKey && !e.ctrlKey && !e.altKey) return send("ROUND_INTRO", { roundId: "r3" });
+    if (e.key === "4" && !e.shiftKey && !e.ctrlKey && !e.altKey) return send("ROUND_INTRO", { roundId: "r4" });
 
     if (e.shiftKey && e.key === "1") return send("SEAL", { roundId: "r1", winner: win });
     if (e.shiftKey && e.key === "2") return send("SEAL", { roundId: "r2", winner: win });
@@ -114,4 +124,16 @@ window.addEventListener("keydown", (e) => {
 
     if (k === "d") return send("ACT_INTRO", { actId: "act2" });
     if (k === "f") return send("FINAL");
+
+    if (e.key === "7") return send("PROCESS", { processId: "p7" });
+    if (e.key === "8") return send("PROCESS", { processId: "p8" });
+    if (e.key === "9") return send("PROCESS", { processId: "p9" });
+    if (e.key === "0") return send("PROCESS", { processId: "p10" });
+
+    if ((e.ctrlKey || e.altKey) && e.key === "1") return send("PROCESS", { processId: "p1" });
+    if ((e.ctrlKey || e.altKey) && e.key === "2") return send("PROCESS", { processId: "p2" });
+    if ((e.ctrlKey || e.altKey) && e.key === "3") return send("PROCESS", { processId: "p3" });
+    if ((e.ctrlKey || e.altKey) && e.key === "4") return send("PROCESS", { processId: "p4" });
+    if ((e.ctrlKey || e.altKey) && e.key === "5") return send("PROCESS", { processId: "p5" });
+    if ((e.ctrlKey || e.altKey) && e.key === "6") return send("PROCESS", { processId: "p6" });
 });
