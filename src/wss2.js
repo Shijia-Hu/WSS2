@@ -232,7 +232,7 @@ function initCarouselDOM(el, isGathering = false) {
 
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const rand = (min, max) => min + Math.random() * (max - min);
-    const count = reduceMotion ? 10 : 20;
+    const count = reduceMotion ? 8 : 14;
 
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i += 1) {
