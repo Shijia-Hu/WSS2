@@ -356,12 +356,12 @@
 
         /* --- 3. UI 组件 --- */
         .carousel { 
-            display: flex; gap: 40px; width: 100vw; padding: 120px 0; 
+            display: flex; gap: 40px; width: 100%; padding: 120px 0; 
             overflow-x: auto; scroll-snap-type: x mandatory; 
             scrollbar-width: none; align-items: center;
         }
         .carousel.focus-mode .arched-card { pointer-events: none; }
-        .carousel-padding { flex: 0 0 calc(50vw - 80px); pointer-events: none; }
+        .carousel-padding { flex: 0 0 calc(50% - 80px); pointer-events: none; }
         .carousel-item { flex: 0 0 160px; height: 280px; scroll-snap-align: center; position: relative; }
         .card-selected-vanish {
             opacity: 0;
