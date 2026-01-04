@@ -390,8 +390,13 @@ function performSelectionMagic(element, carousel, onComplete, shouldRemove = fal
     element.classList.add('card-selected-vanish');
     setTimeout(() => {
         carousel.classList.remove('focus-mode');
-        if (shouldRemove) element.parentElement.remove();
-        else element.classList.remove('card-selected-vanish');
+        if (shouldRemove) {
+            const item = element.parentElement;
+            if (item) item.classList.add('carousel-item-removed');
+            element.classList.remove('card-selected-vanish');
+        } else {
+            element.classList.remove('card-selected-vanish');
+        }
         onComplete();
     }, 900);
 }

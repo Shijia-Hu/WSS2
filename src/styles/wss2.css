@@ -363,6 +363,7 @@
         .carousel.focus-mode .arched-card { pointer-events: none; }
         .carousel-padding { flex: 0 0 calc(50vw - 80px); pointer-events: none; }
         .carousel-item { flex: 0 0 160px; height: 280px; scroll-snap-align: center; position: relative; }
+        .carousel-item.carousel-item-removed { visibility: hidden; pointer-events: none; }
         .card-selected-vanish {
             opacity: 0;
             transform: scale(0.2) rotate(8deg);
