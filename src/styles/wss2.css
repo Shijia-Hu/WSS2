@@ -43,6 +43,38 @@
         }
         @keyframes beamMove { from { transform: translateX(-100vw) rotate(30deg); } to { transform: translateX(100vw) rotate(30deg); } }
 
+        .atmosphere {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .mote {
+            position: absolute;
+            width: var(--mote-size, 6px);
+            height: var(--mote-size, 6px);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 70%);
+            opacity: var(--mote-opacity, 0.4);
+            animation: moteDrift var(--mote-duration, 14s) ease-in-out infinite,
+                moteTwinkle calc(var(--mote-duration, 14s) * 0.6) ease-in-out infinite;
+            mix-blend-mode: screen;
+            filter: blur(0.3px);
+        }
+
+        @keyframes moteDrift {
+            0% { transform: translate3d(0, 0, 0); }
+            50% { transform: translate3d(var(--mote-shift-x, 20px), calc(var(--mote-shift-y, -30px) * 1), 0); }
+            100% { transform: translate3d(calc(var(--mote-shift-x, 20px) * 1.4), calc(var(--mote-shift-y, -30px) * 1.6), 0); }
+        }
+
+        @keyframes moteTwinkle {
+            0%, 100% { opacity: var(--mote-opacity, 0.4); }
+            50% { opacity: calc(var(--mote-opacity, 0.4) + 0.25); }
+        }
+
         /* --- 2. 彩色玻璃拱形卡片 (含图片背景适配) --- */
         .arched-card {
             width: 100%; height: 100%;
@@ -84,6 +116,7 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease; 
             opacity: 0; pointer-events: none; transform: scale(0.98);
+            z-index: 2;
         }
         .view-container.active { opacity: 1; pointer-events: all; transform: scale(1); }
 
@@ -214,4 +247,45 @@
             font-family: 'Cinzel', serif;
             margin-top: 2px;
             opacity: 0.8;
+        }
+
+        .frameLayer {
+            position: fixed;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            display: grid;
+            place-items: center;
+            padding: clamp(10px, 2.2vmin, 28px);
+        }
+
+        .frameLayer img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform: translate3d(0, -10vmin, 0) scale(0.84);
+            transform-origin: center;
+            opacity: 0.85;
+            filter: blur(0.2px);
+        }
+
+        .overlayLayer {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .overlayLayer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.45;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .mote {
+                animation: none !important;
+            }
         }
