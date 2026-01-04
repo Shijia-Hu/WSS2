@@ -149,6 +149,7 @@ let timerMax = 0;
 let isDraggingCarousel = false;
 let lastManualScrollAt = 0;
 const MANUAL_SCROLL_COOLDOWN = 1200;
+let handScrollSuppressed = false;
 
 function getRemainingQuestions() {
     const picked = new Set(SELECTED_16.map(q => q.question));
@@ -215,6 +216,7 @@ function switchView(id, callback) {
         const target = document.getElementById(id);
         if (target) target.classList.add('active');
         currentView = id;
+        handScrollSuppressed = false;
         if (callback) callback();
     }, 800);
 }
@@ -329,6 +331,7 @@ function initMouseDrag(el) {
     const startDrag = (pageX) => {
         isDown = true;
         isDraggingCarousel = true;
+        handScrollSuppressed = true;
         lastManualScrollAt = Date.now();
         startX = pageX - el.offsetLeft;
         scrollLeft = el.scrollLeft;
@@ -340,6 +343,7 @@ function initMouseDrag(el) {
     const moveDrag = (pageX) => {
         if (!isDown) return;
         el.scrollLeft = scrollLeft - (pageX - el.offsetLeft - startX) * 1.5;
+        handScrollSuppressed = true;
         lastManualScrollAt = Date.now();
         updateFisheye(el);
     };
@@ -352,6 +356,7 @@ function initMouseDrag(el) {
     });
     el.addEventListener('touchstart', (e) => {
         if (e.touches.length !== 1) return;
+        handScrollSuppressed = true;
         startDrag(e.touches[0].pageX);
     }, { passive: true });
     el.addEventListener('touchend', stopDrag);
@@ -361,7 +366,10 @@ function initMouseDrag(el) {
         e.preventDefault();
         moveDrag(e.touches[0].pageX);
     }, { passive: false });
-    el.addEventListener('wheel', () => { lastManualScrollAt = Date.now(); }, { passive: true });
+    el.addEventListener('wheel', () => {
+        handScrollSuppressed = true;
+        lastManualScrollAt = Date.now();
+    }, { passive: true });
     el.addEventListener('scroll', () => updateFisheye(el));
 }
 
@@ -542,7 +550,7 @@ async function initMediaPipe() {
                 if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${marks[9].y * window.innerHeight}px`; }
                 if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
                 const ac = document.querySelector('.view-container.active .carousel');
-                if (ac && !ac.classList.contains('focus-mode') && !isDraggingCarousel) {
+                if (ac && !ac.classList.contains('focus-mode') && !isDraggingCarousel && !handScrollSuppressed) {
                     const sinceManual = Date.now() - lastManualScrollAt;
                     if (sinceManual > MANUAL_SCROLL_COOLDOWN) {
                         ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
