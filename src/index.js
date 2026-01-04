@@ -35,8 +35,13 @@
     })();
 
     // 进入：跳转到 WSS2 交互页面
-    document.getElementById("enterBtn").addEventListener("click", () => {
-      window.location.href = "wss2.html";
+    document.getElementById("enterBtn").addEventListener("click", (event) => {
+      event.preventDefault();
+      document.body.classList.add("portal-out");
+      sessionStorage.setItem("portal-entered", "1");
+      window.setTimeout(() => {
+        window.location.href = "wss2.html";
+      }, 520);
     });
 
 // 随机漂浮：小物件漂，大雾/城堡/大光晕不漂
@@ -111,5 +116,55 @@
       window.addEventListener("resize", () => {
         clearTimeout(t);
         t = setTimeout(refreshAll, 180);
+      });
+    })();
+
+// 轻量氛围光尘
+    (() => {
+      const atmosphere = document.querySelector(".atmosphere");
+      if (!atmosphere) return;
+
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const rand = (min, max) => min + Math.random() * (max - min);
+      const count = reduceMotion ? 10 : 22;
+
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < count; i += 1) {
+        const mote = document.createElement("span");
+        mote.className = "mote";
+        mote.style.left = `${rand(4, 96)}%`;
+        mote.style.top = `${rand(10, 92)}%`;
+        mote.style.setProperty("--mote-size", `${rand(3, 8)}px`);
+        mote.style.setProperty("--mote-opacity", rand(0.18, 0.5).toFixed(2));
+        mote.style.setProperty("--mote-duration", `${rand(12, 22).toFixed(1)}s`);
+        mote.style.setProperty("--mote-shift-x", `${rand(-24, 24).toFixed(1)}px`);
+        mote.style.setProperty("--mote-shift-y", `${rand(-40, 30).toFixed(1)}px`);
+        mote.style.animationDelay = `${rand(-10, 0).toFixed(1)}s`;
+        fragment.appendChild(mote);
+      }
+      atmosphere.appendChild(fragment);
+    })();
+
+// UI kit interactions
+    (() => {
+      const feedback = document.getElementById("kit-feedback");
+      const actions = {
+        invoke: "Emerald sigil awakens.",
+        bless: "Rose blessing radiates.",
+        inspect: "Neutral pact revealed."
+      };
+
+      document.querySelectorAll("[data-action]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const action = btn.dataset.action;
+          if (!feedback || !actions[action]) return;
+
+          feedback.textContent = actions[action];
+          feedback.classList.add("is-active");
+          window.clearTimeout(feedback._timer);
+          feedback._timer = window.setTimeout(() => {
+            feedback.classList.remove("is-active");
+          }, 1800);
+        });
       });
     })();

@@ -5,6 +5,14 @@ import { createDirector } from "./story/director.js";
 const director = createDirector();
 const teamIntro = createTeamIntro();
 
+(() => {
+    const wasPortal = sessionStorage.getItem("portal-entered");
+    if (!wasPortal) return;
+    sessionStorage.removeItem("portal-entered");
+    document.body.classList.add("portal-in");
+    window.setTimeout(() => document.body.classList.remove("portal-in"), 900);
+})();
+
 function startAllTeamsIntro(auto = true) {
     teamIntro.showAll(TEAMS, {
         auto,
@@ -216,6 +224,32 @@ function initCarouselDOM(el, isGathering = false) {
     const rightPad = document.createElement('div'); rightPad.className = 'carousel-padding'; el.appendChild(rightPad);
     el.scrollLeft = 0; updateFisheye(el);
 }
+
+// 轻量氛围光尘
+(() => {
+    const atmosphere = document.querySelector(".atmosphere");
+    if (!atmosphere) return;
+
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const count = reduceMotion ? 8 : 14;
+
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i += 1) {
+        const mote = document.createElement("span");
+        mote.className = "mote";
+        mote.style.left = `${rand(4, 96)}%`;
+        mote.style.top = `${rand(10, 92)}%`;
+        mote.style.setProperty("--mote-size", `${rand(3, 7)}px`);
+        mote.style.setProperty("--mote-opacity", rand(0.18, 0.5).toFixed(2));
+        mote.style.setProperty("--mote-duration", `${rand(12, 22).toFixed(1)}s`);
+        mote.style.setProperty("--mote-shift-x", `${rand(-24, 24).toFixed(1)}px`);
+        mote.style.setProperty("--mote-shift-y", `${rand(-40, 30).toFixed(1)}px`);
+        mote.style.animationDelay = `${rand(-10, 0).toFixed(1)}s`;
+        fragment.appendChild(mote);
+    }
+    atmosphere.appendChild(fragment);
+})();
 
 function isCenter(card) {
     const rect = card.getBoundingClientRect();
