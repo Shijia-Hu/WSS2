@@ -222,9 +222,12 @@ function initCarouselDOM(el, isGathering = false) {
     el.innerHTML = '';
     const leftPad = document.createElement('div'); leftPad.className = 'carousel-padding'; el.appendChild(leftPad);
 
-    const items = isGathering ? Array.from({ length: 32 }) : SELECTED_16;
-    if (!isGathering) safeSetText('round-count', items.length);
+    const baseItems = isGathering ? Array.from({ length: 32 }) : SELECTED_16;
+    const repeatCount = 3;
+    const items = Array.from({ length: repeatCount }, () => baseItems).flat();
+    if (!isGathering) safeSetText('round-count', baseItems.length);
     items.forEach((q, i) => {
+        const baseIndex = i % baseItems.length;
         const item = document.createElement('div');
         item.className = 'carousel-item';
         const card = document.createElement('div');
@@ -235,7 +238,7 @@ function initCarouselDOM(el, isGathering = false) {
         imgLayer.className = 'card-img-bg';
 
         if (UPLOADED_IMAGES.length > 0) {
-            const imgIndex = i % UPLOADED_IMAGES.length;
+            const imgIndex = baseIndex % UPLOADED_IMAGES.length;
             imgLayer.style.backgroundImage = `url(${UPLOADED_IMAGES[imgIndex]})`;
         }
 
@@ -261,7 +264,7 @@ function initCarouselDOM(el, isGathering = false) {
             card.innerHTML += `
                         <div class="z-10 flex flex-col items-center">
                             <span class="opacity-40 text-[9px] cinzel mb-1 text-white">VESSEL</span>
-                            <span class="text-4xl font-bold cinzel text-white" style="text-shadow: 0 0 15px ${color}">${i + 1}</span>
+                            <span class="text-4xl font-bold cinzel text-white" style="text-shadow: 0 0 15px ${color}">${baseIndex + 1}</span>
                         </div>
                     `;
             card.onclick = () => { if (isCenter(card)) { CURRENT_PICK = q; performSelectionMagic(card, el, startQuiz, false); } };
@@ -271,7 +274,12 @@ function initCarouselDOM(el, isGathering = false) {
     });
 
     const rightPad = document.createElement('div'); rightPad.className = 'carousel-padding'; el.appendChild(rightPad);
-    el.scrollLeft = 0; updateFisheye(el);
+    requestAnimationFrame(() => {
+        const segmentWidth = el.scrollWidth / repeatCount;
+        el.dataset.segmentWidth = `${segmentWidth}`;
+        el.scrollLeft = segmentWidth;
+        updateFisheye(el);
+    });
 }
 
 // 轻量氛围光尘
@@ -327,6 +335,21 @@ function initMouseDrag(el) {
     if (!el) return;
     let isDown = false, startX, scrollLeft;
     let isWrapping = false;
+    const handleInfiniteScroll = () => {
+        const segmentWidth = Number(el.dataset.segmentWidth || 0);
+        if (!segmentWidth) return;
+        if (el.scrollLeft <= segmentWidth * 0.5) {
+            isWrapping = true;
+            el.scrollLeft += segmentWidth;
+            isWrapping = false;
+            return;
+        }
+        if (el.scrollLeft >= segmentWidth * 1.5) {
+            isWrapping = true;
+            el.scrollLeft -= segmentWidth;
+            isWrapping = false;
+        }
+    };
     const wrapCarouselScroll = () => {
         const maxScroll = el.scrollWidth - el.clientWidth;
         const threshold = 4;
@@ -373,7 +396,7 @@ function initMouseDrag(el) {
         moveDrag(e.touches[0].pageX);
     }, { passive: false });
     el.addEventListener('scroll', () => {
-        if (!isWrapping) wrapCarouselScroll();
+        if (!isWrapping) handleInfiniteScroll();
         updateFisheye(el);
     });
 }
