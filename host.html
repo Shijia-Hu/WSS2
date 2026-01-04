@@ -5,20 +5,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WSS2 Host Console</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@200;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0b10;
-            --panel: rgba(255, 255, 255, .06);
-            --line: rgba(255, 255, 255, .14);
-            --text: rgba(255, 255, 255, .92);
+            --bg: #060806;
+            --panel: rgba(255, 255, 255, .08);
+            --line: rgba(255, 255, 255, .18);
+            --text: rgba(255, 255, 255, .94);
             --muted: rgba(255, 255, 255, .68);
+            --emerald: #0b4d2e;
+            --rose: #f4b3d2;
+            --gold: #c5a059;
+            --glass: rgba(255, 255, 255, 0.07);
         }
 
         body {
             margin: 0;
-            background: var(--bg);
+            background: radial-gradient(circle at 15% 20%, rgba(11, 77, 46, 0.35), transparent 45%),
+                radial-gradient(circle at 85% 10%, rgba(244, 179, 210, 0.35), transparent 40%),
+                linear-gradient(180deg, #0a0f0b, #050706);
             color: var(--text);
-            font-family: system-ui, -apple-system, "PingFang SC", "Noto Serif SC", sans-serif;
+            font-family: "Noto Serif SC", serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.05), transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.04), transparent 55%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.12)' stroke-width='1.2'%3E%3Cpath d='M10 110 C40 10 180 10 210 110 C180 210 40 210 10 110 Z'/%3E%3Cpath d='M110 8 C145 40 145 180 110 212 C75 180 75 40 110 8 Z'/%3E%3Ccircle cx='110' cy='110' r='32'/%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.35;
+            mix-blend-mode: screen;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 6% 4%;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 60px rgba(197, 160, 89, 0.15), inset 0 0 35px rgba(255, 255, 255, 0.06);
+            pointer-events: none;
         }
 
         .wrap {
@@ -35,15 +67,19 @@
         }
 
         .card {
-            background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .04));
-            border: 1px solid var(--line);
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 14px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
             font-size: 18px;
             margin: 0 0 10px;
+            font-family: "Cinzel", serif;
+            letter-spacing: 0.08em;
         }
 
         h2 {
@@ -52,28 +88,33 @@
             color: var(--muted);
             letter-spacing: .08em;
             text-transform: uppercase;
+            font-family: "Cinzel", serif;
         }
 
         .btn {
             appearance: none;
             border: 1px solid var(--line);
-            background: rgba(255, 255, 255, .06);
+            background: var(--glass);
             color: var(--text);
             padding: 10px 12px;
             border-radius: 12px;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 12px;
         }
 
         .btn:hover {
-            background: rgba(255, 255, 255, .10);
+            background: rgba(255, 255, 255, .14);
         }
 
         .btn.primary {
-            border-color: rgba(180, 140, 255, .35);
+            border-color: rgba(197, 160, 89, 0.45);
+            box-shadow: 0 0 18px rgba(197, 160, 89, 0.25);
         }
 
         .btn.danger {
-            border-color: rgba(255, 120, 120, .35);
+            border-color: rgba(244, 179, 210, 0.45);
         }
 
         .btn.small {
@@ -87,7 +128,7 @@
             gap: 8px;
             align-items: center;
             border: 1px solid var(--line);
-            background: rgba(255, 255, 255, .04);
+            background: rgba(255, 255, 255, .05);
             padding: 8px 10px;
             border-radius: 999px;
             color: var(--muted);
@@ -96,7 +137,7 @@
 
         input,
         select {
-            background: rgba(0, 0, 0, .35);
+            background: rgba(0, 0, 0, .45);
             color: var(--text);
             border: 1px solid var(--line);
             border-radius: 10px;
@@ -170,7 +211,8 @@
                     <div style="color:var(--muted); font-size:13px; line-height:1.5;">
                         大屏页打开 <b>wss2.html</b> 全屏；控制台打开 <b>host.html</b> 操作。<br />
                         快捷键：开始亮相 <kbd>I</kbd>（自动）/ <kbd>Shift</kbd>+<kbd>I</kbd>（手动），Next <kbd>N</kbd>，Stop
-                        <kbd>X</kbd>，Act II <kbd>D</kbd>，Final <kbd>F</kbd>。
+                        <kbd>X</kbd>，Act II <kbd>D</kbd>，Final <kbd>F</kbd>。<br />
+                        流程快捷键：<kbd>Ctrl</kbd>/<kbd>Alt</kbd>+<kbd>1</kbd>~<kbd>6</kbd>（流程一到六），<kbd>7</kbd>~<kbd>0</kbd>（流程七到十）。
                     </div>
                 </div>
                 <div class="spacer"></div>
@@ -237,6 +279,24 @@
 
                 <div class="spacer"></div>
                 <div class="pill">提示：如果大屏没反应，先确认大屏页和 host 页在同一浏览器同一域名下打开。</div>
+            </div>
+        </div>
+
+        <h2>流程卡片 · 主持流程提示</h2>
+        <div class="card">
+            <div class="row" style="margin-bottom:10px;">
+                <button class="btn" data-cmd="process1">流程一 暖场活动一</button>
+                <button class="btn" data-cmd="process2">流程二 开场词</button>
+                <button class="btn" data-cmd="process3">流程三 魔法球抽取</button>
+                <button class="btn" data-cmd="process4">流程四 比赛规则</button>
+                <button class="btn" data-cmd="process5">流程五 团队赛</button>
+            </div>
+            <div class="row">
+                <button class="btn" data-cmd="process6">流程六 中场休息</button>
+                <button class="btn" data-cmd="process7">流程七 擂台赛</button>
+                <button class="btn" data-cmd="process8">流程八 暖场活动三</button>
+                <button class="btn" data-cmd="process9">流程九 颁奖</button>
+                <button class="btn" data-cmd="process10">流程十 总结合影</button>
             </div>
         </div>
 

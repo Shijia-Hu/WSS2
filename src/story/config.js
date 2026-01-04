@@ -1,5 +1,87 @@
 // src/story/config.js
 export const STORY = {
+    processes: [
+        {
+            id: "p1",
+            title: "流程一：暖场活动一",
+            subtitle: "Warm-up Activity One",
+            lines: [
+                "魔法师：化学实验表演"
+            ]
+        },
+        {
+            id: "p2",
+            title: "流程二：开场词",
+            subtitle: "Opening Remarks",
+            lines: []
+        },
+        {
+            id: "p3",
+            title: "流程三：参赛选手亮相并抽取魔法球",
+            subtitle: "Contestants' Appearance and Magic Ball Draw",
+            lines: [
+                "现场安排魔法球抽取，但不公布抽到魔法球的具体内容。"
+            ]
+        },
+        {
+            id: "p4",
+            title: "流程四：主持人宣读比赛规则",
+            subtitle: "Host Reads the Competition Rules",
+            lines: [
+                "视频播放抢答与答题规则。",
+                "16 位参赛选手各自挑选一道题目进入本轮题池。",
+                "全员抢答，抢到的队伍再从 16 题中抽一道进行答题。",
+                "答错：题目回到 16 题中；答对：本队积 1 分。",
+                "每一轮最高分队伍晋级总决赛，总决赛由四支队伍参与。",
+                "每一轮固定两组 Good 与两组 Wicked，最终决赛阵营不固定。"
+            ]
+        },
+        {
+            id: "p5",
+            title: "流程五：团队赛（中插暖场活动二）",
+            subtitle: "Team Competition (Including Warm-up Activity Two)",
+            lines: [
+                "B 组比赛结束时公布 A 组积分排名。",
+                "C 组比赛结束时公布 B 组积分排名。",
+                "D 组比赛结束时公布 C 组积分排名。"
+            ]
+        },
+        {
+            id: "p6",
+            title: "流程六：中场休息与表演",
+            subtitle: "Half-time Break and Performance",
+            lines: [
+                "男团表演。",
+                "表演结束时公布 D 组积分排名。"
+            ]
+        },
+        {
+            id: "p7",
+            title: "流程七：冠亚之战——擂台赛",
+            subtitle: "Championship Battle — Arena Competition",
+            lines: []
+        },
+        {
+            id: "p8",
+            title: "流程八：暖场活动三",
+            subtitle: "Warm-up Activity Three",
+            lines: [
+                "女团（艺术社）表演。"
+            ]
+        },
+        {
+            id: "p9",
+            title: "流程九：颁奖",
+            subtitle: "Awards Ceremony",
+            lines: []
+        },
+        {
+            id: "p10",
+            title: "流程十：主持人总结，合影留念",
+            subtitle: "Host's Closing Remarks and Group Photo",
+            lines: []
+        }
+    ],
     acts: {
         act1: {
             id: "act1",

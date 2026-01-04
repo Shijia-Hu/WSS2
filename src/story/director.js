@@ -23,6 +23,17 @@ export function createDirector() {
         });
     }
 
+    function showProcess(processId) {
+        const process = STORY.processes?.find(item => item.id === processId);
+        if (!process) return;
+        overlay.show({
+            title: process.title,
+            subtitle: process.subtitle || "",
+            lines: process.lines || [],
+            meta: "Process"
+        });
+    }
+
     function showRoundIntro(roundId) {
         const r = STORY.acts.act1.rounds.find(x => x.id === roundId);
         if (!r) return;
@@ -60,5 +71,5 @@ export function createDirector() {
         });
     }
 
-    return { showActIntro, showRoundIntro, showSeal, showFinalReveal };
+    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal };
 }
