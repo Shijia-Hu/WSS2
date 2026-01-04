@@ -30,6 +30,11 @@ const PINCH_TIME = 900;
 let pinchStart = 0;
 let timerInterval = null;
 
+function getRemainingQuestions() {
+    const picked = new Set(SELECTED_16.map(q => q.question));
+    return MASTER_POOL.filter(q => !picked.has(q.question));
+}
+
 // --- 图片处理 ---
 document.getElementById('image-input').addEventListener('change', (e) => {
     const files = Array.from(e.target.files);
@@ -68,6 +73,7 @@ function initCarouselDOM(el, isGathering = false) {
     const leftPad = document.createElement('div'); leftPad.className = 'carousel-padding'; el.appendChild(leftPad);
 
     const items = isGathering ? Array.from({ length: 32 }) : SELECTED_16;
+    if (!isGathering) safeSetText('round-count', items.length);
     items.forEach((q, i) => {
         const item = document.createElement('div');
         item.className = 'carousel-item';
@@ -154,6 +160,22 @@ function initMouseDrag(el) {
 
 function startRitual() {
     gatheredCount = 0; SELECTED_16 = [];
+    if (MASTER_POOL.length === 16) {
+        SELECTED_16 = MASTER_POOL.map((item, idx) => ({
+            ...JSON.parse(JSON.stringify(item)),
+            soulColor: idx % 2 === 0 ? 'var(--elphaba)' : 'var(--glinda)',
+            uid: Date.now() + Math.random(),
+        }));
+        gatheredCount = 16;
+        safeSetText('gather-count', `${gatheredCount} / 16`);
+        const prog = document.getElementById('gather-progress');
+        if (prog) {
+            prog.style.width = '100%';
+            prog.style.backgroundColor = 'var(--oz-gold)';
+        }
+        setTimeout(() => switchView('view-shuffling', startShuffle), 200);
+        return;
+    }
     switchView('view-gathering', () => {
         const el = document.getElementById('gatherCarousel');
         initCarouselDOM(el, true);
@@ -179,6 +201,8 @@ function performSelectionMagic(element, carousel, onComplete, shouldRemove = fal
 
 function handleGather(color) {
     if (gatheredCount >= 16) return;
+    const remaining = getRemainingQuestions();
+    if (remaining.length === 0) return;
     gatheredCount++;
     safeSetText('gather-count', `${gatheredCount} / 16`);
     const prog = document.getElementById('gather-progress');
@@ -186,8 +210,8 @@ function handleGather(color) {
         prog.style.width = `${(gatheredCount / 16) * 100}%`;
         prog.style.backgroundColor = `var(${color.includes('elphaba') ? '--elphaba' : '--glinda'})`;
     }
-    const ridx = Math.floor(Math.random() * MASTER_POOL.length);
-    const q = JSON.parse(JSON.stringify(MASTER_POOL[ridx]));
+    const ridx = Math.floor(Math.random() * remaining.length);
+    const q = JSON.parse(JSON.stringify(remaining[ridx]));
     q.soulColor = color;
     q.uid = Date.now() + Math.random();
     SELECTED_16.push(q);
