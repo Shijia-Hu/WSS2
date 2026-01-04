@@ -147,6 +147,8 @@ const TIMER_BOOST = 5;
 let timerRemaining = 0;
 let timerMax = 0;
 let isDraggingCarousel = false;
+let lastManualScrollAt = 0;
+const MANUAL_SCROLL_COOLDOWN = 1200;
 
 function getRemainingQuestions() {
     const picked = new Set(SELECTED_16.map(q => q.question));
@@ -327,6 +329,7 @@ function initMouseDrag(el) {
     const startDrag = (pageX) => {
         isDown = true;
         isDraggingCarousel = true;
+        lastManualScrollAt = Date.now();
         startX = pageX - el.offsetLeft;
         scrollLeft = el.scrollLeft;
     };
@@ -337,6 +340,7 @@ function initMouseDrag(el) {
     const moveDrag = (pageX) => {
         if (!isDown) return;
         el.scrollLeft = scrollLeft - (pageX - el.offsetLeft - startX) * 1.5;
+        lastManualScrollAt = Date.now();
         updateFisheye(el);
     };
     el.addEventListener('mousedown', (e) => { startDrag(e.pageX); });
@@ -357,6 +361,7 @@ function initMouseDrag(el) {
         e.preventDefault();
         moveDrag(e.touches[0].pageX);
     }, { passive: false });
+    el.addEventListener('wheel', () => { lastManualScrollAt = Date.now(); }, { passive: true });
     el.addEventListener('scroll', () => updateFisheye(el));
 }
 
@@ -538,7 +543,10 @@ async function initMediaPipe() {
                 if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
                 const ac = document.querySelector('.view-container.active .carousel');
                 if (ac && !ac.classList.contains('focus-mode') && !isDraggingCarousel) {
-                    ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                    const sinceManual = Date.now() - lastManualScrollAt;
+                    if (sinceManual > MANUAL_SCROLL_COOLDOWN) {
+                        ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                    }
                 }
                 const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
                 if (dist < PINCH_THRESHOLD) {
