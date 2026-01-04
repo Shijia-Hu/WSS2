@@ -323,15 +323,35 @@ function updateFisheye(el) {
 function initMouseDrag(el) {
     if (!el) return;
     let isDown = false, startX, scrollLeft;
-    el.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
-    el.addEventListener('mouseleave', () => isDown = false);
-    el.addEventListener('mouseup', () => isDown = false);
-    el.addEventListener('mousemove', (e) => {
+    const startDrag = (pageX) => {
+        isDown = true;
+        startX = pageX - el.offsetLeft;
+        scrollLeft = el.scrollLeft;
+    };
+    const stopDrag = () => { isDown = false; };
+    const moveDrag = (pageX) => {
         if (!isDown) return;
-        e.preventDefault();
-        el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
+        el.scrollLeft = scrollLeft - (pageX - el.offsetLeft - startX) * 1.5;
         updateFisheye(el);
+    };
+    el.addEventListener('mousedown', (e) => { startDrag(e.pageX); });
+    el.addEventListener('mouseleave', stopDrag);
+    el.addEventListener('mouseup', stopDrag);
+    el.addEventListener('mousemove', (e) => {
+        e.preventDefault();
+        moveDrag(e.pageX);
     });
+    el.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        startDrag(e.touches[0].pageX);
+    }, { passive: true });
+    el.addEventListener('touchend', stopDrag);
+    el.addEventListener('touchcancel', stopDrag);
+    el.addEventListener('touchmove', (e) => {
+        if (!isDown || e.touches.length !== 1) return;
+        e.preventDefault();
+        moveDrag(e.touches[0].pageX);
+    }, { passive: false });
     el.addEventListener('scroll', () => updateFisheye(el));
 }
 
