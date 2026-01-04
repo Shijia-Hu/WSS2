@@ -444,7 +444,7 @@ function startQuiz() {
             b.innerText = opt; b.onclick = () => checkAnswer(i); opts.appendChild(b);
         });
     }
-    const f = document.getElementById('quiz-feedback'); if (f) f.style.opacity = '0';
+    setQuizFeedbackVisible(false);
     switchView('view-quiz', initTimer);
 }
 
@@ -481,11 +481,10 @@ function addExtraTime() {
 }
 
 function handleTimeout() {
-    const f = document.getElementById('quiz-feedback');
     document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
     const m = document.getElementById('feedback-msg');
     if (m) { m.innerText = "MAGIC DEPLETED! THE SEAL REMAINS."; m.style.color = "var(--glinda)"; }
-    if (f) f.style.opacity = '1';
+    setQuizFeedbackVisible(true);
     timerRemaining = 0;
     updateTimerUI();
     setExtraTimeButtonState(false);
@@ -493,7 +492,7 @@ function handleTimeout() {
 
 function checkAnswer(idx) {
     clearInterval(timerInterval);
-    const f = document.getElementById('quiz-feedback'); const m = document.getElementById('feedback-msg');
+    const m = document.getElementById('feedback-msg');
     document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
     if (idx === CURRENT_PICK.correct) {
         if (m) { m.innerText = "POPULAR! THE ENERGY IS RELEASED."; m.style.color = "var(--elphaba)"; }
@@ -502,7 +501,7 @@ function checkAnswer(idx) {
     } else {
         if (m) { m.innerText = "FAILED. THE SEAL IS RETIGHTENED."; m.style.color = "var(--glinda)"; }
     }
-    if (f) f.style.opacity = '1';
+    setQuizFeedbackVisible(true);
     setExtraTimeButtonState(false);
 }
 
@@ -516,6 +515,14 @@ function backToSelection() {
 
 function showMessage(t, c) { safeSetText('msg-title', t); safeSetText('msg-content', c); document.getElementById('message-box').style.display = 'flex'; }
 function hideMessage() { document.getElementById('message-box').style.display = 'none'; }
+
+function setQuizFeedbackVisible(visible) {
+    const feedback = document.getElementById('quiz-feedback');
+    if (!feedback) return;
+    feedback.style.opacity = visible ? '1' : '0';
+    feedback.style.pointerEvents = visible ? 'auto' : 'none';
+    feedback.style.transform = visible ? 'translateY(0)' : 'translateY(8px)';
+}
 
 async function initMediaPipe() {
     if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
