@@ -29,6 +29,11 @@ const PINCH_THRESHOLD = 0.035;
 const PINCH_TIME = 900;
 let pinchStart = 0;
 let timerInterval = null;
+const TIMER_BASE = 20;
+const TIMER_CAP = 30;
+const TIMER_BOOST = 5;
+let timerRemaining = 0;
+let timerMax = 0;
 
 function getRemainingQuestions() {
     const picked = new Set(SELECTED_16.map(q => q.question));
@@ -248,10 +253,36 @@ function startQuiz() {
     switchView('view-quiz', initTimer);
 }
 
+function updateTimerUI() {
+    const bar = document.getElementById('timer-bar');
+    const text = document.getElementById('timer-text');
+    if (bar && timerMax > 0) bar.style.width = `${(timerRemaining / timerMax) * 100}%`;
+    if (text) text.innerText = `剩余 ${Math.max(0, Math.ceil(timerRemaining))}s`;
+}
+
+function setExtraTimeButtonState(enabled) {
+    const btn = document.querySelector('[data-action="addExtraTime"]');
+    if (btn) btn.disabled = !enabled;
+}
+
 function initTimer() {
-    let t = 20; const bar = document.getElementById('timer-bar');
+    timerRemaining = TIMER_BASE;
+    timerMax = TIMER_BASE;
     if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => { t -= 0.1; if (bar) bar.style.width = `${(t / 20) * 100}%`; if (t <= 0) { clearInterval(timerInterval); handleTimeout(); } }, 100);
+    updateTimerUI();
+    setExtraTimeButtonState(true);
+    timerInterval = setInterval(() => {
+        timerRemaining -= 0.1;
+        updateTimerUI();
+        if (timerRemaining <= 0) { clearInterval(timerInterval); handleTimeout(); }
+    }, 100);
+}
+
+function addExtraTime() {
+    if (timerRemaining <= 0 || !timerInterval) return;
+    timerRemaining = Math.min(timerRemaining + TIMER_BOOST, TIMER_CAP);
+    timerMax = Math.max(timerMax, timerRemaining);
+    updateTimerUI();
 }
 
 function handleTimeout() {
@@ -260,6 +291,9 @@ function handleTimeout() {
     const m = document.getElementById('feedback-msg');
     if (m) { m.innerText = "MAGIC DEPLETED! THE SEAL REMAINS."; m.style.color = "var(--glinda)"; }
     if (f) f.style.opacity = '1';
+    timerRemaining = 0;
+    updateTimerUI();
+    setExtraTimeButtonState(false);
 }
 
 function checkAnswer(idx) {
@@ -274,6 +308,7 @@ function checkAnswer(idx) {
         if (m) { m.innerText = "FAILED. THE SEAL IS RETIGHTENED."; m.style.color = "var(--glinda)"; }
     }
     if (f) f.style.opacity = '1';
+    setExtraTimeButtonState(false);
 }
 
 function backToSelection() {
@@ -353,6 +388,7 @@ const actions = {
     openImport,
     closeImport,
     processImport,
+    addExtraTime,
     backToSelection,
     hideMessage,
 };
