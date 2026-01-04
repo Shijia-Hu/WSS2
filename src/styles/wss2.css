@@ -1,4 +1,4 @@
-:root {
+        :root {
             --elphaba: #00703C;
             --elphaba-light: #00a859;
             --glinda: #f896c2;
@@ -6,12 +6,18 @@
             --lead: #1a1a1a; 
             --oz-gold: #c5a059;
             --bg-deep: #020804;
+            --oz-gold-soft: rgba(197, 160, 89, 0.65);
+            --oz-parchment: rgba(235, 216, 200, 0.12);
+            --oz-ink: #11180e;
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Noto Serif SC', serif;
+            --shadow-panel: 0 22px 60px rgba(0, 0, 0, 0.55);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body { 
-            font-family: 'Noto Serif SC', serif; 
+            font-family: var(--font-body); 
             background: var(--bg-deep); 
             color: #e2e8f0; 
             overflow: hidden; 
@@ -193,20 +199,37 @@
         }
 
         .btn-oz {
-            padding: 14px 45px; border: 2px solid var(--lead); 
-            background: linear-gradient(to bottom, #2a2a2a, #000);
+            padding: 14px 45px;
+            border: 2px solid transparent;
+            background:
+                linear-gradient(180deg, rgba(20, 20, 20, 0.92), rgba(0, 0, 0, 0.95)) padding-box,
+                linear-gradient(120deg, rgba(0, 168, 89, 0.4), rgba(197, 160, 89, 0.45), rgba(248, 150, 194, 0.35)) border-box;
             color: var(--oz-gold);
-            border-radius: 40px; font-family: 'Cinzel', serif; font-size: 0.85rem;
-            letter-spacing: 0.3em; transition: all 0.4s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border-radius: 999px;
+            font-family: var(--font-display);
+            font-size: 0.78rem;
+            letter-spacing: 0.35em;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.55);
             text-transform: uppercase;
         }
-        .btn-oz:hover { border-color: var(--oz-gold); box-shadow: 0 0 25px var(--oz-gold); }
+        .btn-oz:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 22px rgba(197, 160, 89, 0.25), 0 14px 32px rgba(0, 0, 0, 0.6);
+            filter: saturate(1.05);
+        }
 
         .status-badge {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.35);
-            padding: 6px 16px; border-radius: 30px; font-size: 11px; color: var(--oz-gold);
-            font-family: 'Cinzel'; letter-spacing: 0.1em;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            color: var(--oz-gold);
+            font-family: var(--font-display);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            box-shadow: inset 0 0 12px rgba(197, 160, 89, 0.12);
         }
 
         #hand-cursor {
@@ -228,12 +251,41 @@
         }
 
         .glass-panel {
-            background: linear-gradient(180deg, rgba(10, 10, 10, 0.65), rgba(0, 0, 0, 0.65));
+            background:
+                radial-gradient(120% 90% at 50% 20%, rgba(255, 255, 255, 0.12), transparent 55%),
+                linear-gradient(180deg, rgba(16, 16, 16, 0.72), rgba(0, 0, 0, 0.7)),
+                linear-gradient(180deg, var(--oz-parchment), rgba(0, 0, 0, 0.35));
             backdrop-filter: blur(26px);
-            border: 2px solid rgba(197, 160, 89, 0.3);
+            border: 2px solid rgba(197, 160, 89, 0.35);
             border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(0, 112, 60, 0.15);
+            box-shadow: var(--shadow-panel), 0 0 32px rgba(0, 112, 60, 0.12);
             width: 90%; max-width: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            pointer-events: none;
+            opacity: 0.5;
+            background:
+                radial-gradient(220px 200px at 20% 15%, rgba(197, 160, 89, 0.18), transparent 60%),
+                radial-gradient(220px 200px at 85% 20%, rgba(248, 150, 194, 0.12), transparent 65%),
+                radial-gradient(220px 200px at 50% 80%, rgba(0, 112, 60, 0.12), transparent 68%);
+            filter: blur(10px);
+        }
+
+        .glass-panel::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.2;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='.35'/%3E%3C/svg%3E");
+            background-size: 260px 260px;
         }
 
         .timer-container {
@@ -241,7 +293,7 @@
             width: 100%;
             height: 12px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(197, 160, 89, 0.25);
+            border: 1px solid rgba(197, 160, 89, 0.35);
             border-radius: 999px;
             overflow: hidden;
             margin-bottom: 24px;
@@ -260,10 +312,10 @@
             top: -22px;
             right: 0;
             font-size: 10px;
-            letter-spacing: 0.35em;
+            letter-spacing: 0.4em;
             text-transform: uppercase;
             color: rgba(248, 150, 194, 0.9);
-            font-family: 'Cinzel', serif;
+            font-family: var(--font-display);
         }
 
         .magic-orb-btn {
@@ -271,9 +323,9 @@
             width: 72px;
             height: 72px;
             border-radius: 50%;
-            border: 2px solid rgba(248, 150, 194, 0.4);
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(248, 150, 194, 0.35) 45%, rgba(0, 112, 60, 0.4) 75%);
-            box-shadow: 0 0 20px rgba(248, 150, 194, 0.35), 0 0 25px rgba(0, 112, 60, 0.35);
+            border: 2px solid rgba(248, 150, 194, 0.35);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(248, 150, 194, 0.3) 45%, rgba(0, 112, 60, 0.35) 75%);
+            box-shadow: 0 0 24px rgba(248, 150, 194, 0.35), 0 0 26px rgba(0, 112, 60, 0.35);
             display: grid;
             place-items: center;
             color: #fff;
@@ -301,7 +353,7 @@
             font-size: 9px;
             letter-spacing: 0.4em;
             text-transform: uppercase;
-            font-family: 'Cinzel', serif;
+            font-family: var(--font-display);
             margin-top: 2px;
             opacity: 0.8;
         }
