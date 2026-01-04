@@ -301,9 +301,12 @@ function initCarouselDOM(el, isGathering = false) {
 })();
 
 function isCenter(card) {
-    const rect = card.getBoundingClientRect();
-    const center = window.innerWidth / 2;
-    return Math.abs((rect.left + rect.width / 2) - center) < 120;
+    const item = card.closest('.carousel-item');
+    const carousel = card.closest('.carousel');
+    if (!item || !carousel) return false;
+    const center = carousel.scrollLeft + carousel.clientWidth / 2;
+    const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+    return Math.abs(itemCenter - center) < 120;
 }
 
 function updateFisheye(el) {
