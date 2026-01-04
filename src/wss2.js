@@ -1,3 +1,109 @@
+import { TEAMS } from "./data/teams.js";
+import { createTeamIntro } from "./story/teamIntro.js";
+import { createDirector } from "./story/director.js";
+
+const director = createDirector();
+const teamIntro = createTeamIntro();
+
+function startAllTeamsIntro(auto = true) {
+    teamIntro.showAll(TEAMS, {
+        auto,
+        memberDelay: 950,
+        teamHold: 550,
+        onComplete: () => director.showActIntro("act1"),
+    });
+}
+
+// 键盘双保险：I 自动全队亮相；Shift+I 手动全队亮相
+window.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase();
+    if (k === "i" && !e.shiftKey) startAllTeamsIntro(true);
+    if (k === "i" && e.shiftKey) startAllTeamsIntro(false);
+
+    // 手动推进 / 救场
+    if (k === "n") teamIntro.next(); // 下一位（或下一队）
+    if (k === "x") teamIntro.stop(); // 立刻结束亮相
+});
+
+function replayOneTeam(teamId, auto, memberDelay = 950, teamHold = 550) {
+    const team = TEAMS.find(t => t.id === teamId);
+    if (!team) return;
+    // 用 showAll([team]) 复用同一套“右到左召唤/自动/手动”逻辑
+    teamIntro.showAll([team], { auto, memberDelay, teamHold });
+}
+
+// 统一指令入口：无论来自 host 还是键盘，都走这里
+function applyCommand(type, payload = {}) {
+    switch (type) {
+        case "TEAMS_INTRO_START":
+            startAllTeamsIntro(payload?.auto !== false);
+            break;
+        case "TEAMS_INTRO_NEXT":
+            teamIntro.next();
+            break;
+        case "TEAMS_INTRO_STOP":
+            teamIntro.stop();
+            break;
+        case "TEAMS_INTRO_STOP":
+            teamIntro.stop();
+            break;
+        case "TEAMS_SHOW":
+            return replayOneTeam(payload.teamId, payload.auto !== false, payload.memberDelay, payload.teamHold);
+        case "ACT_INTRO":
+            director.showActIntro(payload.actId);
+            break;
+        case "ROUND_INTRO":
+            director.showRoundIntro(payload.roundId);
+            break;
+        case "SEAL":
+            director.showSeal(payload.roundId, payload.winner || "本轮胜队");
+            break;
+        case "FINAL":
+            director.showFinalReveal();
+            break;
+        default:
+            // unknown command: ignore
+            break;
+    }
+}
+
+// 1) host 控台消息通道（同机同浏览器标签页）
+const bc = new BroadcastChannel("wss2-control");
+bc.addEventListener("message", (e) => {
+    const { type, payload } = e.data || {};
+    if (!type) return;
+    applyCommand(type, payload);
+});
+
+// 2) 大屏页键盘直控（容错/救场用）
+// 建议：加一个“需要按住 Ctrl”才生效，避免误触（可选）
+const REQUIRE_CTRL = false;
+
+window.addEventListener("keydown", (e) => {
+    if (REQUIRE_CTRL && !e.ctrlKey) return;
+
+    const k = e.key.toLowerCase();
+
+    // 1~4：各轮串词开场
+    if (e.key === "1") return applyCommand("ROUND_INTRO", { roundId: "r1" });
+    if (e.key === "2") return applyCommand("ROUND_INTRO", { roundId: "r2" });
+    if (e.key === "3") return applyCommand("ROUND_INTRO", { roundId: "r3" });
+    if (e.key === "4") return applyCommand("ROUND_INTRO", { roundId: "r4" });
+
+    // Shift+1~4：各轮封印仪式
+    if (e.shiftKey && e.key === "1") return applyCommand("SEAL", { roundId: "r1", winner: "本轮胜队" });
+    if (e.shiftKey && e.key === "2") return applyCommand("SEAL", { roundId: "r2", winner: "本轮胜队" });
+    if (e.shiftKey && e.key === "3") return applyCommand("SEAL", { roundId: "r3", winner: "本轮胜队" });
+    if (e.shiftKey && e.key === "4") return applyCommand("SEAL", { roundId: "r4", winner: "本轮胜队" });
+
+    // D：Act II 宣言
+    if (k === "d") return applyCommand("ACT_INTRO", { actId: "act2" });
+
+    // F：最终反转
+    if (k === "f") return applyCommand("FINAL");
+});
+
+
 const DEFAULT_POOL = [
     { "question": "谁唱响了《Defying Gravity》？", "options": ["格琳达", "埃尔法巴", "费耶罗", "男巫"], "correct": 1 },
     { "question": "格琳达最初在希兹大学的名字？", "options": ["格琳达", "格琳迪瓦", "嘉琳达", "格洛丽亚"], "correct": 2 },
