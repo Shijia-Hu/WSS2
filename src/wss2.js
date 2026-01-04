@@ -152,13 +152,6 @@ function getRemainingQuestions() {
     return MASTER_POOL.filter(q => !picked.has(q.question));
 }
 
-// --- 图片处理 ---
-document.getElementById('image-input').addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    UPLOADED_IMAGES = files.map(f => URL.createObjectURL(f));
-    safeSetText('image-status', `已选择 ${UPLOADED_IMAGES.length} / 16 张`);
-});
-
 function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
 function safeToggleClass(id, className, force) { const el = document.getElementById(id); if (el) el.classList.toggle(className, force); }
 
@@ -169,6 +162,46 @@ function updatePoolUI() {
         const btn = document.getElementById('start-btn');
         if (btn) btn.classList.remove('opacity-30', 'pointer-events-none');
     }
+}
+
+async function loadJsonAsset(url) {
+    try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Failed to load ${url}`);
+        return await res.json();
+    } catch (err) {
+        console.warn(err);
+        return null;
+    }
+}
+
+function normalizeImages(list, targetCount = 16) {
+    if (!Array.isArray(list)) return [];
+    const images = list.filter(Boolean);
+    if (images.length === 0) return [];
+    const output = [];
+    for (let i = 0; i < targetCount; i += 1) {
+        output.push(images[i % images.length]);
+    }
+    return output;
+}
+
+async function loadInitialAssets() {
+    const [questions, images] = await Promise.all([
+        loadJsonAsset("/data/questions.json"),
+        loadJsonAsset("/data/images.json"),
+    ]);
+
+    if (Array.isArray(questions) && questions.length >= 16) {
+        MASTER_POOL = questions.map((item, index) => ({
+            id: Date.now() + index,
+            question: item.question,
+            options: item.options,
+            correct: item.correct,
+        }));
+    }
+
+    UPLOADED_IMAGES = normalizeImages(images, 16);
 }
 
 function switchView(id, callback) {
@@ -201,8 +234,9 @@ function initCarouselDOM(el, isGathering = false) {
         const imgLayer = document.createElement('div');
         imgLayer.className = 'card-img-bg';
 
-        if (!isGathering && UPLOADED_IMAGES[i]) {
-            imgLayer.style.backgroundImage = `url(${UPLOADED_IMAGES[i]})`;
+        if (UPLOADED_IMAGES.length > 0) {
+            const imgIndex = i % UPLOADED_IMAGES.length;
+            imgLayer.style.backgroundImage = `url(${UPLOADED_IMAGES[imgIndex]})`;
         }
 
         card.appendChild(imgLayer);
@@ -457,22 +491,8 @@ function backToSelection() {
     updatePoolUI();
 }
 
-function openImport() { document.getElementById('import-modal').style.display = 'flex'; }
-function closeImport() { document.getElementById('import-modal').style.display = 'none'; }
 function showMessage(t, c) { safeSetText('msg-title', t); safeSetText('msg-content', c); document.getElementById('message-box').style.display = 'flex'; }
 function hideMessage() { document.getElementById('message-box').style.display = 'none'; }
-
-function processImport() {
-    const input = document.getElementById('json-input');
-    if (!input) return;
-    try {
-        const data = JSON.parse(input.value.trim());
-        if (Array.isArray(data) && data.length >= 16) {
-            MASTER_POOL = data.map((item, index) => ({ id: Date.now() + index, question: item.question, options: item.options, correct: item.correct }));
-            updatePoolUI(); closeImport(); showMessage("SUCCESS", "SCROLL INJECTED.");
-        } else showMessage("FAILED", "NEED 16+ ITEMS.");
-    } catch (e) { showMessage("ERROR", "CORRUPTED SCROLL."); }
-}
 
 async function initMediaPipe() {
     if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
@@ -519,13 +539,16 @@ function handleConfirm() {
     if (closest && minDist < 120) closest.click();
 }
 
-window.onload = () => { updatePoolUI(); initMediaPipe(); };
+async function initApp() {
+    await loadInitialAssets();
+    updatePoolUI();
+    initMediaPipe();
+}
+
+window.onload = () => { initApp(); };
 
 const actions = {
     startRitual,
-    openImport,
-    closeImport,
-    processImport,
     addExtraTime,
     backToSelection,
     hideMessage,
