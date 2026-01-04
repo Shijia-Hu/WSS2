@@ -359,6 +359,8 @@
             display: flex; gap: 40px; width: 100vw; padding: 120px 0; 
             overflow-x: auto; scroll-snap-type: x mandatory; 
             scrollbar-width: none; align-items: center;
+            touch-action: pan-x;
+            overscroll-behavior-x: contain;
         }
         .carousel.focus-mode .arched-card { pointer-events: none; }
         .carousel-padding { flex: 0 0 calc(50vw - 80px); pointer-events: none; }

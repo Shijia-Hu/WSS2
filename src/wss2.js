@@ -146,6 +146,7 @@ const TIMER_CAP = 30;
 const TIMER_BOOST = 5;
 let timerRemaining = 0;
 let timerMax = 0;
+let isDraggingCarousel = false;
 
 function getRemainingQuestions() {
     const picked = new Set(SELECTED_16.map(q => q.question));
@@ -325,10 +326,14 @@ function initMouseDrag(el) {
     let isDown = false, startX, scrollLeft;
     const startDrag = (pageX) => {
         isDown = true;
+        isDraggingCarousel = true;
         startX = pageX - el.offsetLeft;
         scrollLeft = el.scrollLeft;
     };
-    const stopDrag = () => { isDown = false; };
+    const stopDrag = () => {
+        isDown = false;
+        isDraggingCarousel = false;
+    };
     const moveDrag = (pageX) => {
         if (!isDown) return;
         el.scrollLeft = scrollLeft - (pageX - el.offsetLeft - startX) * 1.5;
@@ -532,7 +537,9 @@ async function initMediaPipe() {
                 if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${marks[9].y * window.innerHeight}px`; }
                 if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
                 const ac = document.querySelector('.view-container.active .carousel');
-                if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                if (ac && !ac.classList.contains('focus-mode') && !isDraggingCarousel) {
+                    ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                }
                 const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
                 if (dist < PINCH_THRESHOLD) {
                     if (pinchStart === 0) pinchStart = Date.now();
