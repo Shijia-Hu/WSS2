@@ -1,19 +1,56 @@
 :root {
-      /* 从你参考图里抽出来的“低饱和”倾向 */
-      --ink: #11180e;
+      /* === High Fantasy: Wicked x Good design tokens === */
+      --color-emerald-900: #08150d;
+      --color-emerald-800: #0b2417;
+      --color-emerald-700: #0f3a22;
+      --color-emerald-500: #1f8f57;
+      --color-emerald-300: #80b878;
+      --color-rose-500: #f08cbc;
+      --color-rose-300: #f6b6d6;
+      --color-gold-600: #a88957;
+      --color-gold-500: #bfa16f;
+      --color-gold-300: #e2c79b;
+      --color-parchment-200: #ebd8c8;
+      --color-parchment-300: #d4b8a3;
+      --color-ivory-100: #f6e7de;
+      --color-ink-900: #11180e;
+      --color-obsidian: #050505;
+      --color-blush: #d0ada5;
+
+      --font-display: "Cinzel", serif;
+      --font-body: "Noto Serif SC", serif;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-7: 32px;
+      --space-8: 40px;
+
+      --radius-sm: 10px;
+      --radius-md: 18px;
+      --radius-lg: 28px;
+      --radius-pill: 999px;
+
+      --shadow-soft: 0 16px 40px rgba(0, 0, 0, .45);
+      --shadow-strong: 0 30px 90px rgba(0, 0, 0, .62);
+
+      /* Legacy tokens (mapped to new system) */
+      --ink: var(--color-ink-900);
       --deepGreen: #293823;
-      --emeraldGlow: #80b878;
-      --brass: #bfa16f;
-      --parchment: #ebd8c8;
-      --parchment2: #d4b8a3;
-      --blush: #d0ada5;
-      --ivory: #f6e7de;
+      --emeraldGlow: var(--color-emerald-300);
+      --brass: var(--color-gold-500);
+      --parchment: var(--color-parchment-200);
+      --parchment2: var(--color-parchment-300);
+      --blush: var(--color-blush);
+      --ivory: var(--color-ivory-100);
 
-      /* 你原本的点缀色，做成“光”而不是“纯色块” */
-      --wicked: #00a859;
-      --good: #f896c2;
+      --wicked: var(--color-emerald-500);
+      --good: var(--color-rose-500);
 
-      --bg: #050505;
+      --bg: var(--color-obsidian);
 
       /* 质感强度（调参入口） */
       --bloom: .55;
@@ -26,7 +63,6 @@
       /* 指针高光 */
       --mx: 50%;
       --my: 45%;
-
 
       --frameScale: .80;
       /* 框缩到屏幕的 92%（0.86~0.96 都常用） */
@@ -46,7 +82,7 @@
 
     body {
       margin: 0;
-      font-family: "Noto Serif SC", serif;
+      font-family: var(--font-body);
       background: var(--bg);
       overflow: hidden;
       color: #eaeaea;
@@ -415,7 +451,7 @@
     .panel {
       width: min(940px, 92vw);
       padding: clamp(20px, 3vw, 38px);
-      border-radius: 34px;
+      border-radius: var(--radius-lg);
       position: relative;
       overflow: hidden;
       text-align: center;
@@ -428,7 +464,7 @@
         linear-gradient(90deg, rgba(0, 168, 89, .28), rgba(191, 161, 111, .26), rgba(208, 173, 165, .28)) border-box;
       border: 2px solid transparent;
 
-      box-shadow: 0 30px 90px rgba(0, 0, 0, .62);
+      box-shadow: var(--shadow-strong);
       backdrop-filter: blur(18px);
     }
 
@@ -459,7 +495,7 @@
     }
 
     .kicker {
-      font-family: "Cinzel", serif;
+      font-family: var(--font-display);
       letter-spacing: .55em;
       text-transform: uppercase;
       font-size: 12px;
@@ -468,7 +504,7 @@
     }
 
     .title {
-      font-family: "Cinzel", serif;
+      font-family: var(--font-display);
       font-weight: 700;
       letter-spacing: .26em;
       font-size: clamp(34px, 5vw, 76px);
@@ -495,7 +531,7 @@
       gap: 18px;
       align-items: baseline;
       margin-bottom: 26px;
-      font-family: "Cinzel", serif;
+      font-family: var(--font-display);
       letter-spacing: .22em;
     }
 
@@ -517,12 +553,12 @@
     }
 
     .btn {
-      font-family: "Cinzel", serif;
+      font-family: var(--font-display);
       letter-spacing: .35em;
       text-transform: uppercase;
       font-size: 12px;
       padding: 14px 28px;
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -539,6 +575,28 @@
 
       box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
       transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+    }
+
+    .btn--wicked {
+      color: var(--color-emerald-300);
+      background:
+        linear-gradient(180deg, rgba(6, 20, 12, .9), rgba(0, 0, 0, .9)) padding-box,
+        linear-gradient(120deg, rgba(0, 168, 89, .55), rgba(191, 161, 111, .25)) border-box;
+    }
+
+    .btn--good {
+      color: var(--color-rose-300);
+      background:
+        linear-gradient(180deg, rgba(20, 10, 16, .9), rgba(0, 0, 0, .9)) padding-box,
+        linear-gradient(120deg, rgba(248, 150, 194, .55), rgba(191, 161, 111, .35)) border-box;
+    }
+
+    .btn--ghost {
+      letter-spacing: .28em;
+      color: rgba(255, 255, 255, .65);
+      background:
+        linear-gradient(180deg, rgba(20, 20, 20, .6), rgba(5, 5, 5, .6)) padding-box,
+        linear-gradient(120deg, rgba(226, 199, 155, .25), rgba(255, 255, 255, .1)) border-box;
     }
 
     .btn::before {
@@ -563,6 +621,168 @@
 
     .btn:active {
       transform: translateY(0) scale(.985);
+    }
+
+    .ui-kit {
+      margin-top: var(--space-7);
+      display: grid;
+      gap: var(--space-6);
+      text-align: left;
+    }
+
+    .ui-kit__title {
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: .4em;
+      font-size: 11px;
+      color: rgba(226, 199, 155, .85);
+      text-align: center;
+    }
+
+    .ui-kit__buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: center;
+    }
+
+    .ui-kit__grid {
+      display: grid;
+      gap: var(--space-4);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .ornate-panel {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      background:
+        radial-gradient(160% 120% at 20% 10%, rgba(255, 255, 255, .08), transparent 50%),
+        linear-gradient(180deg, rgba(10, 10, 10, .6), rgba(0, 0, 0, .65));
+      border: 1px solid rgba(191, 161, 111, .25);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .ornate-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .4;
+      background:
+        linear-gradient(120deg, transparent 20%, rgba(226, 199, 155, .12), transparent 60%),
+        radial-gradient(120px 120px at 85% 20%, rgba(248, 150, 194, .16), transparent 70%);
+    }
+
+    .card {
+      position: relative;
+      padding: var(--space-4);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(8, 8, 8, .6);
+      min-height: 140px;
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .card--wicked {
+      border-color: rgba(0, 168, 89, .35);
+      box-shadow: 0 0 28px rgba(0, 168, 89, .12);
+    }
+
+    .card--good {
+      border-color: rgba(248, 150, 194, .35);
+      box-shadow: 0 0 28px rgba(248, 150, 194, .12);
+    }
+
+    .card__title {
+      font-family: var(--font-display);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: rgba(226, 199, 155, .9);
+    }
+
+    .card__text {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: .78;
+    }
+
+    .card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .badge {
+      font-family: var(--font-display);
+      letter-spacing: .22em;
+      font-size: 9px;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, .18);
+    }
+
+    .badge--wicked {
+      color: var(--color-emerald-300);
+      border-color: rgba(0, 168, 89, .35);
+      background: rgba(0, 168, 89, .12);
+    }
+
+    .badge--good {
+      color: var(--color-rose-300);
+      border-color: rgba(248, 150, 194, .35);
+      background: rgba(248, 150, 194, .12);
+    }
+
+    .atmosphere {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .mote {
+      position: absolute;
+      width: var(--mote-size, 6px);
+      height: var(--mote-size, 6px);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0) 70%);
+      opacity: var(--mote-opacity, .4);
+      animation: moteDrift var(--mote-duration, 14s) ease-in-out infinite,
+        moteTwinkle calc(var(--mote-duration, 14s) * 0.6) ease-in-out infinite;
+      mix-blend-mode: screen;
+      filter: blur(.3px);
+    }
+
+    @keyframes moteDrift {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+
+      50% {
+        transform: translate3d(var(--mote-shift-x, 20px), calc(var(--mote-shift-y, -30px) * 1), 0);
+      }
+
+      100% {
+        transform: translate3d(calc(var(--mote-shift-x, 20px) * 1.4), calc(var(--mote-shift-y, -30px) * 1.6), 0);
+      }
+    }
+
+    @keyframes moteTwinkle {
+      0%,
+      100% {
+        opacity: var(--mote-opacity, .4);
+      }
+
+      50% {
+        opacity: calc(var(--mote-opacity, .4) + .25);
+      }
     }
 
 
@@ -635,5 +855,9 @@
       .btn,
       .btn::before {
         transition: none !important;
+      }
+
+      .mote {
+        animation: none !important;
       }
     }

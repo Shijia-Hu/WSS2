@@ -113,3 +113,29 @@
         t = setTimeout(refreshAll, 180);
       });
     })();
+
+// 轻量氛围光尘
+    (() => {
+      const atmosphere = document.querySelector(".atmosphere");
+      if (!atmosphere) return;
+
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const rand = (min, max) => min + Math.random() * (max - min);
+      const count = reduceMotion ? 10 : 22;
+
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < count; i += 1) {
+        const mote = document.createElement("span");
+        mote.className = "mote";
+        mote.style.left = `${rand(4, 96)}%`;
+        mote.style.top = `${rand(10, 92)}%`;
+        mote.style.setProperty("--mote-size", `${rand(3, 8)}px`);
+        mote.style.setProperty("--mote-opacity", rand(0.18, 0.5).toFixed(2));
+        mote.style.setProperty("--mote-duration", `${rand(12, 22).toFixed(1)}s`);
+        mote.style.setProperty("--mote-shift-x", `${rand(-24, 24).toFixed(1)}px`);
+        mote.style.setProperty("--mote-shift-y", `${rand(-40, 30).toFixed(1)}px`);
+        mote.style.animationDelay = `${rand(-10, 0).toFixed(1)}s`;
+        fragment.appendChild(mote);
+      }
+      atmosphere.appendChild(fragment);
+    })();
