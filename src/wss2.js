@@ -306,21 +306,20 @@ function initCarouselDOM(el, isGathering = false) {
 })();
 
 function isCenter(card) {
-    const rect = card.getBoundingClientRect();
     const carousel = card.closest('.carousel');
-    const bounds = carousel ? carousel.getBoundingClientRect() : { left: 0, width: window.innerWidth };
-    const center = bounds.left + bounds.width / 2;
-    return Math.abs((rect.left + rect.width / 2) - center) < 140;
+    const container = carousel || card.parentElement;
+    if (!container) return false;
+    const center = container.scrollLeft + container.clientWidth / 2;
+    const itemCenter = card.offsetLeft + card.offsetWidth / 2;
+    return Math.abs(itemCenter - center) < 140;
 }
 
 function updateFisheye(el) {
     if (!el) return;
     const items = el.querySelectorAll('.arched-card');
-    const rect = el.getBoundingClientRect();
-    const center = rect.left + rect.width / 2;
+    const center = el.scrollLeft + el.clientWidth / 2;
     items.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const dist = Math.abs(center - (rect.left + rect.width / 2));
+        const dist = Math.abs(center - (card.offsetLeft + card.offsetWidth / 2));
         const s = Math.max(1, 1.45 - dist / 350);
         const o = Math.max(0.3, 1 - dist / 450);
         if (!card.classList.contains('card-selected-vanish')) { card.style.transform = `scale(${s})`; card.style.opacity = o; }
