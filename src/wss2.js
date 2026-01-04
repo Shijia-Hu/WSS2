@@ -33,38 +33,21 @@ function replayOneTeam(teamId, auto, memberDelay = 950, teamHold = 550) {
 }
 
 // 统一指令入口：无论来自 host 还是键盘，都走这里
+const COMMAND_HANDLERS = {
+    TEAMS_INTRO_START: (payload) => startAllTeamsIntro(payload?.auto !== false),
+    TEAMS_INTRO_NEXT: () => teamIntro.next(),
+    TEAMS_INTRO_STOP: () => teamIntro.stop(),
+    TEAMS_SHOW: (payload) => replayOneTeam(payload.teamId, payload.auto !== false, payload.memberDelay, payload.teamHold),
+    ACT_INTRO: (payload) => director.showActIntro(payload.actId),
+    ROUND_INTRO: (payload) => director.showRoundIntro(payload.roundId),
+    SEAL: (payload) => director.showSeal(payload.roundId, payload.winner || "本轮胜队"),
+    FINAL: () => director.showFinalReveal(),
+};
+
 function applyCommand(type, payload = {}) {
-    switch (type) {
-        case "TEAMS_INTRO_START":
-            startAllTeamsIntro(payload?.auto !== false);
-            break;
-        case "TEAMS_INTRO_NEXT":
-            teamIntro.next();
-            break;
-        case "TEAMS_INTRO_STOP":
-            teamIntro.stop();
-            break;
-        case "TEAMS_INTRO_STOP":
-            teamIntro.stop();
-            break;
-        case "TEAMS_SHOW":
-            return replayOneTeam(payload.teamId, payload.auto !== false, payload.memberDelay, payload.teamHold);
-        case "ACT_INTRO":
-            director.showActIntro(payload.actId);
-            break;
-        case "ROUND_INTRO":
-            director.showRoundIntro(payload.roundId);
-            break;
-        case "SEAL":
-            director.showSeal(payload.roundId, payload.winner || "本轮胜队");
-            break;
-        case "FINAL":
-            director.showFinalReveal();
-            break;
-        default:
-            // unknown command: ignore
-            break;
-    }
+    const handler = COMMAND_HANDLERS[type];
+    if (!handler) return;
+    return handler(payload);
 }
 
 // 1) host 控台消息通道（同机同浏览器标签页）
