@@ -326,6 +326,23 @@ function updateFisheye(el) {
 function initMouseDrag(el) {
     if (!el) return;
     let isDown = false, startX, scrollLeft;
+    let isWrapping = false;
+    const wrapCarouselScroll = () => {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        const threshold = 4;
+        if (maxScroll <= threshold) return;
+        if (el.scrollLeft <= threshold) {
+            isWrapping = true;
+            el.scrollLeft = maxScroll - threshold;
+            isWrapping = false;
+            return;
+        }
+        if (el.scrollLeft >= maxScroll - threshold) {
+            isWrapping = true;
+            el.scrollLeft = threshold;
+            isWrapping = false;
+        }
+    };
     const startDrag = (pageX) => {
         isDown = true;
         startX = pageX - el.offsetLeft;
@@ -355,7 +372,10 @@ function initMouseDrag(el) {
         e.preventDefault();
         moveDrag(e.touches[0].pageX);
     }, { passive: false });
-    el.addEventListener('scroll', () => updateFisheye(el));
+    el.addEventListener('scroll', () => {
+        if (!isWrapping) wrapCarouselScroll();
+        updateFisheye(el);
+    });
 }
 
 function startRitual() {
