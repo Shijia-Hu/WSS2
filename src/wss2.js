@@ -22,9 +22,12 @@ let SELECTED_16 = [];
 let UPLOADED_IMAGES = [];
 let gatheredCount = 0;
 let currentView = 'view-intro';
+let CURRENT_PICK = null;
 let smoothedX = 0.5;
 const LERP_FACTOR = 0.08;
 const PINCH_THRESHOLD = 0.035;
+const PINCH_TIME = 900;
+let pinchStart = 0;
 let timerInterval = null;
 
 // --- 图片处理 ---
