@@ -5,6 +5,14 @@ import { createDirector } from "./story/director.js";
 const director = createDirector();
 const teamIntro = createTeamIntro();
 
+(() => {
+    const wasPortal = sessionStorage.getItem("portal-entered");
+    if (!wasPortal) return;
+    sessionStorage.removeItem("portal-entered");
+    document.body.classList.add("portal-in");
+    window.setTimeout(() => document.body.classList.remove("portal-in"), 900);
+})();
+
 function startAllTeamsIntro(auto = true) {
     teamIntro.showAll(TEAMS, {
         auto,

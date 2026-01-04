@@ -35,8 +35,13 @@
     })();
 
     // 进入：跳转到 WSS2 交互页面
-    document.getElementById("enterBtn").addEventListener("click", () => {
-      window.location.href = "wss2.html";
+    document.getElementById("enterBtn").addEventListener("click", (event) => {
+      event.preventDefault();
+      document.body.classList.add("portal-out");
+      sessionStorage.setItem("portal-entered", "1");
+      window.setTimeout(() => {
+        window.location.href = "wss2.html";
+      }, 520);
     });
 
 // 随机漂浮：小物件漂，大雾/城堡/大光晕不漂
