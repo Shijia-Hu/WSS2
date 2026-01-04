@@ -307,14 +307,17 @@ function initCarouselDOM(el, isGathering = false) {
 
 function isCenter(card) {
     const rect = card.getBoundingClientRect();
-    const center = window.innerWidth / 2;
-    return Math.abs((rect.left + rect.width / 2) - center) < 120;
+    const carousel = card.closest('.carousel');
+    const bounds = carousel ? carousel.getBoundingClientRect() : { left: 0, width: window.innerWidth };
+    const center = bounds.left + bounds.width / 2;
+    return Math.abs((rect.left + rect.width / 2) - center) < 140;
 }
 
 function updateFisheye(el) {
     if (!el) return;
     const items = el.querySelectorAll('.arched-card');
-    const center = window.innerWidth / 2;
+    const rect = el.getBoundingClientRect();
+    const center = rect.left + rect.width / 2;
     items.forEach(card => {
         const rect = card.getBoundingClientRect();
         const dist = Math.abs(center - (rect.left + rect.width / 2));
