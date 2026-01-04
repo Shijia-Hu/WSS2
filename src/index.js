@@ -139,3 +139,27 @@
       }
       atmosphere.appendChild(fragment);
     })();
+
+// UI kit interactions
+    (() => {
+      const feedback = document.getElementById("kit-feedback");
+      const actions = {
+        invoke: "Emerald sigil awakens.",
+        bless: "Rose blessing radiates.",
+        inspect: "Neutral pact revealed."
+      };
+
+      document.querySelectorAll("[data-action]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const action = btn.dataset.action;
+          if (!feedback || !actions[action]) return;
+
+          feedback.textContent = actions[action];
+          feedback.classList.add("is-active");
+          window.clearTimeout(feedback._timer);
+          feedback._timer = window.setTimeout(() => {
+            feedback.classList.remove("is-active");
+          }, 1800);
+        });
+      });
+    })();

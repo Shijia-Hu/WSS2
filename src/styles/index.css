@@ -639,6 +639,23 @@
       text-align: center;
     }
 
+    .ui-kit__feedback {
+      min-height: 18px;
+      font-size: 11px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      text-align: center;
+      color: rgba(226, 199, 155, .7);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+
+    .ui-kit__feedback.is-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .ui-kit__buttons {
       display: flex;
       flex-wrap: wrap;

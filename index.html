@@ -131,10 +131,11 @@
 
         <div class="ui-kit">
           <div class="ui-kit__title">Arcane Interface Kit</div>
+          <div id="kit-feedback" class="ui-kit__feedback" role="status" aria-live="polite"></div>
           <div class="ui-kit__buttons">
-            <button class="btn btn--wicked" type="button">Emerald Sigil</button>
-            <button class="btn btn--good" type="button">Rose Blessing</button>
-            <button class="btn btn--ghost" type="button">Neutral Pact</button>
+            <button class="btn btn--wicked" type="button" data-action="invoke">Emerald Sigil</button>
+            <button class="btn btn--good" type="button" data-action="bless">Rose Blessing</button>
+            <button class="btn btn--ghost" type="button" data-action="inspect">Neutral Pact</button>
           </div>
 
           <div class="ui-kit__grid">
@@ -144,7 +145,7 @@
                 <p class="card__text">Gleaming runes, green lightning, and brass machinery fuel this Wicked panel.</p>
                 <div class="card__footer">
                   <span class="badge badge--wicked">Wicked</span>
-                  <button class="btn btn--wicked" type="button">Invoke</button>
+                  <button class="btn btn--wicked" type="button" data-action="invoke">Invoke</button>
                 </div>
               </div>
             </div>
@@ -154,7 +155,7 @@
                 <p class="card__text">Pearl shimmer, soft blush light, and airy glows keep the Good realm luminous.</p>
                 <div class="card__footer">
                   <span class="badge badge--good">Good</span>
-                  <button class="btn btn--good" type="button">Bless</button>
+                  <button class="btn btn--good" type="button" data-action="bless">Bless</button>
                 </div>
               </div>
             </div>
@@ -164,7 +165,7 @@
                 <p class="card__text">Layered parchment, engraved borders, and cinematic shadows make data feel sacred.</p>
                 <div class="card__footer">
                   <span class="badge">Neutral</span>
-                  <button class="btn btn--ghost" type="button">Inspect</button>
+                  <button class="btn btn--ghost" type="button" data-action="inspect">Inspect</button>
                 </div>
               </div>
             </div>
