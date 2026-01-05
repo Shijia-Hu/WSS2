@@ -136,10 +136,25 @@ let gatheredCount = 0;
 let currentView = 'view-intro';
 let CURRENT_PICK = null;
 let smoothedX = 0.5;
-const LERP_FACTOR = 0.08;
-const PINCH_THRESHOLD = 0.035;
-const PINCH_TIME = 900;
-let pinchStart = 0;
+const LERP_FACTOR = 0.12;
+const MAX_HAND_DEPTH = -0.02;
+const ACTIVE_ZONE = { left: 0.2, right: 0.8, top: 0.1, bottom: 0.9 };
+const SWIPE_MIN_FRAMES = 3;
+const BECKON_MIN_FRAMES = 3;
+const PALM_SMOOTH_FACTOR = 0.25;
+let beckonActive = false;
+let gesturePaused = false;
+let lastPalmY = null;
+let lastPalmX = null;
+const SWIPE_TRAVEL_MIN = 0.045;
+const SWIPE_ACTIVE_FRAMES = 6;
+const SWIPE_TRAVEL_DECAY = 0.9;
+const SWIPE_FRAME_DELTA_MIN = 0.008;
+let swipeFrames = 0;
+let beckonFrames = 0;
+let palmXSmoothed = null;
+let palmTravel = 0;
+let swipeActiveFrames = 0;
 let timerInterval = null;
 const TIMER_BASE = 20;
 const TIMER_CAP = 30;
@@ -212,6 +227,7 @@ function switchView(id, callback) {
         const target = document.getElementById(id);
         if (target) target.classList.add('active');
         currentView = id;
+        if (id === 'view-selection') gesturePaused = false;
         if (callback) callback();
     }, 800);
 }
@@ -567,29 +583,139 @@ function setQuizFeedbackVisible(visible) {
     feedback.style.transform = visible ? 'translateY(0)' : 'translateY(8px)';
 }
 
+function isOpenPalm(marks) {
+    const indexOpen = marks[8].y < marks[6].y;
+    const middleOpen = marks[12].y < marks[10].y;
+    const ringOpen = marks[16].y < marks[14].y;
+    const pinkyOpen = marks[20].y < marks[18].y;
+    return indexOpen && middleOpen && ringOpen && pinkyOpen;
+}
+
+function isFist(marks) {
+    const indexCurled = marks[8].y > marks[6].y;
+    const middleCurled = marks[12].y > marks[10].y;
+    const ringCurled = marks[16].y > marks[14].y;
+    const pinkyCurled = marks[20].y > marks[18].y;
+    return indexCurled && middleCurled && ringCurled && pinkyCurled;
+}
+
+function isPalmFacingCamera(marks) {
+    const wristZ = marks[0].z;
+    const palmZ = (marks[5].z + marks[9].z + marks[13].z + marks[17].z) / 4;
+    return palmZ < wristZ - 0.02;
+}
+
+function isPalmOpenFacingCamera(marks) {
+    return isOpenPalm(marks) && isPalmFacingCamera(marks);
+}
+
+function isInActiveZone(marks) {
+    const palmX = marks[9].x;
+    const palmY = marks[9].y;
+    return (
+        palmX >= ACTIVE_ZONE.left &&
+        palmX <= ACTIVE_ZONE.right &&
+        palmY >= ACTIVE_ZONE.top &&
+        palmY <= ACTIVE_ZONE.bottom
+    );
+}
+
+function isBeckoning(marks) {
+    return isFist(marks) && isPalmFacingCamera(marks);
+}
+
+function smoothPalmX(palmX) {
+    if (palmXSmoothed === null) {
+        palmXSmoothed = palmX;
+    } else {
+        palmXSmoothed += (palmX - palmXSmoothed) * PALM_SMOOTH_FACTOR;
+    }
+    return palmXSmoothed;
+}
+
+function getNearestHand(multiHandLandmarks) {
+    let closestMarks = null;
+    let closestZ = Infinity;
+    multiHandLandmarks.forEach((marks) => {
+        const palmZ = (marks[0].z + marks[5].z + marks[9].z + marks[13].z + marks[17].z) / 5;
+        if (palmZ < closestZ) {
+            closestZ = palmZ;
+            closestMarks = marks;
+        }
+    });
+    if (!closestMarks || closestZ > MAX_HAND_DEPTH) return null;
+    return closestMarks;
+}
+
 async function initMediaPipe() {
     if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
     try {
         const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
+        hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
         hands.onResults(res => {
-            const cursor = document.getElementById('hand-cursor'), prog = document.getElementById('pinch-progress');
+            if (gesturePaused) return;
             if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
-                const marks = res.multiHandLandmarks[0];
-                smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
-                if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${marks[9].y * window.innerHeight}px`; }
-                if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
-                const ac = document.querySelector('.view-container.active .carousel');
-                if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
-                const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
-                if (dist < PINCH_THRESHOLD) {
-                    if (pinchStart === 0) pinchStart = Date.now();
-                    const p = Math.min(1, (Date.now() - pinchStart) / PINCH_TIME);
-                    const bar = document.getElementById('pinch-bar');
-                    if (bar) bar.style.clipPath = `inset(${100 - p * 100}% 0 0 0)`;
-                    if (p >= 1) { handleConfirm(); pinchStart = 0; if (prog) prog.style.display = 'none'; }
-                } else { pinchStart = 0; const bar = document.getElementById('pinch-bar'); if (bar) bar.style.clipPath = `inset(100% 0 0 0)`; }
-            } else { if (cursor) cursor.style.display = 'none'; if (prog) prog.style.display = 'none'; }
+                const marks = getNearestHand(res.multiHandLandmarks);
+                if (!marks) {
+                    beckonActive = false;
+                    lastPalmY = null;
+                    lastPalmX = null;
+                    palmXSmoothed = null;
+                    swipeFrames = 0;
+                    beckonFrames = 0;
+                    palmTravel = 0;
+                    swipeActiveFrames = 0;
+                    return;
+                }
+                const palmY = marks[9].y;
+                lastPalmY = palmY;
+                const palmX = marks[9].x;
+                const palmXStable = smoothPalmX(palmX);
+                const palmDelta = lastPalmX !== null ? Math.abs(palmXStable - lastPalmX) : 0;
+                lastPalmX = palmXStable;
+                const palmInZone = isInActiveZone(marks);
+                if (palmInZone) {
+                    swipeFrames = Math.min(swipeFrames + 1, SWIPE_MIN_FRAMES);
+                    const travelDelta = palmDelta >= SWIPE_FRAME_DELTA_MIN ? palmDelta : 0;
+                    palmTravel = (palmTravel + travelDelta) * SWIPE_TRAVEL_DECAY;
+                    if (palmTravel >= SWIPE_TRAVEL_MIN) {
+                        swipeActiveFrames = SWIPE_ACTIVE_FRAMES;
+                    } else {
+                        swipeActiveFrames = Math.max(swipeActiveFrames - 1, 0);
+                    }
+                } else {
+                    swipeFrames = 0;
+                    palmTravel = 0;
+                    swipeActiveFrames = 0;
+                }
+                if (palmInZone && swipeFrames >= SWIPE_MIN_FRAMES && swipeActiveFrames > 0) {
+                    smoothedX += ((1 - palmXStable) - smoothedX) * LERP_FACTOR;
+                    const ac = document.querySelector('.view-container.active .carousel');
+                    if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                }
+                const beckoning = isInActiveZone(marks) && isBeckoning(marks);
+                if (beckoning) {
+                    beckonFrames = Math.min(beckonFrames + 1, BECKON_MIN_FRAMES);
+                    if (!beckonActive) {
+                        if (beckonFrames >= BECKON_MIN_FRAMES) {
+                            beckonActive = true;
+                            handleConfirm();
+                        }
+                    }
+                } else {
+                    beckonActive = false;
+                    beckonFrames = 0;
+                }
+            } else {
+                beckonActive = false;
+                lastPalmY = null;
+                lastPalmX = null;
+                palmXSmoothed = null;
+                swipeFrames = 0;
+                beckonFrames = 0;
+                palmTravel = 0;
+                swipeActiveFrames = 0;
+            }
         });
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         const video = document.createElement('video');
@@ -609,7 +735,10 @@ function handleConfirm() {
         const d = Math.abs((rect.left + rect.width / 2) - center);
         if (d < minDist) { minDist = d; closest = it; }
     });
-    if (closest && minDist < 120) closest.click();
+    if (closest && minDist < 120) {
+        gesturePaused = true;
+        closest.click();
+    }
 }
 
 async function initApp() {
