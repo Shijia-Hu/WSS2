@@ -138,6 +138,8 @@ let CURRENT_PICK = null;
 let smoothedX = 0.5;
 const LERP_FACTOR = 0.08;
 let beckonActive = false;
+let gesturePaused = false;
+let lastPalmY = null;
 let timerInterval = null;
 const TIMER_BASE = 20;
 const TIMER_CAP = 30;
@@ -210,6 +212,7 @@ function switchView(id, callback) {
         const target = document.getElementById(id);
         if (target) target.classList.add('active');
         currentView = id;
+        if (id === 'view-selection') gesturePaused = false;
         if (callback) callback();
     }, 800);
 }
@@ -565,12 +568,30 @@ function setQuizFeedbackVisible(visible) {
     feedback.style.transform = visible ? 'translateY(0)' : 'translateY(8px)';
 }
 
-function isBeckoning(marks) {
+function isOpenPalm(marks) {
+    const indexOpen = marks[8].y < marks[6].y;
+    const middleOpen = marks[12].y < marks[10].y;
+    const ringOpen = marks[16].y < marks[14].y;
+    const pinkyOpen = marks[20].y < marks[18].y;
+    return indexOpen && middleOpen && ringOpen && pinkyOpen;
+}
+
+function isFist(marks) {
     const indexCurled = marks[8].y > marks[6].y;
     const middleCurled = marks[12].y > marks[10].y;
     const ringCurled = marks[16].y > marks[14].y;
     const pinkyCurled = marks[20].y > marks[18].y;
     return indexCurled && middleCurled && ringCurled && pinkyCurled;
+}
+
+function isPalmFacingCamera(marks) {
+    const wristZ = marks[0].z;
+    const palmZ = (marks[5].z + marks[9].z + marks[13].z + marks[17].z) / 4;
+    return palmZ < wristZ - 0.02;
+}
+
+function isBeckoning(marks, palmMovingUp) {
+    return isFist(marks) && isPalmFacingCamera(marks) && palmMovingUp;
 }
 
 async function initMediaPipe() {
@@ -579,12 +600,18 @@ async function initMediaPipe() {
         const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
         hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
         hands.onResults(res => {
+            if (gesturePaused) return;
             if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
                 const marks = res.multiHandLandmarks[0];
-                smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
-                const ac = document.querySelector('.view-container.active .carousel');
-                if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
-                const beckoning = isBeckoning(marks);
+                const palmY = marks[9].y;
+                const palmMovingUp = lastPalmY !== null && (lastPalmY - palmY) > 0.012;
+                lastPalmY = palmY;
+                if (isOpenPalm(marks) && isPalmFacingCamera(marks)) {
+                    smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
+                    const ac = document.querySelector('.view-container.active .carousel');
+                    if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+                }
+                const beckoning = isBeckoning(marks, palmMovingUp);
                 if (beckoning) {
                     if (!beckonActive) {
                         beckonActive = true;
@@ -595,6 +622,7 @@ async function initMediaPipe() {
                 }
             } else {
                 beckonActive = false;
+                lastPalmY = null;
             }
         });
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -615,7 +643,10 @@ function handleConfirm() {
         const d = Math.abs((rect.left + rect.width / 2) - center);
         if (d < minDist) { minDist = d; closest = it; }
     });
-    if (closest && minDist < 120) closest.click();
+    if (closest && minDist < 120) {
+        gesturePaused = true;
+        closest.click();
+    }
 }
 
 async function initApp() {
