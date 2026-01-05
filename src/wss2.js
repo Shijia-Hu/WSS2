@@ -137,6 +137,7 @@ let currentView = 'view-intro';
 let CURRENT_PICK = null;
 let smoothedX = 0.5;
 const LERP_FACTOR = 0.08;
+const MAX_HAND_DEPTH = -0.02;
 let beckonActive = false;
 let gesturePaused = false;
 let lastPalmY = null;
@@ -594,6 +595,20 @@ function isBeckoning(marks, palmMovingUp) {
     return isFist(marks) && isPalmFacingCamera(marks) && palmMovingUp;
 }
 
+function getNearestHand(multiHandLandmarks) {
+    let closestMarks = null;
+    let closestZ = Infinity;
+    multiHandLandmarks.forEach((marks) => {
+        const palmZ = (marks[0].z + marks[5].z + marks[9].z + marks[13].z + marks[17].z) / 5;
+        if (palmZ < closestZ) {
+            closestZ = palmZ;
+            closestMarks = marks;
+        }
+    });
+    if (!closestMarks || closestZ > MAX_HAND_DEPTH) return null;
+    return closestMarks;
+}
+
 async function initMediaPipe() {
     if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
     try {
@@ -602,16 +617,12 @@ async function initMediaPipe() {
         hands.onResults(res => {
             if (gesturePaused) return;
             if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
-                let closestMarks = res.multiHandLandmarks[0];
-                let closestZ = Infinity;
-                res.multiHandLandmarks.forEach((marks) => {
-                    const palmZ = (marks[0].z + marks[5].z + marks[9].z + marks[13].z + marks[17].z) / 5;
-                    if (palmZ < closestZ) {
-                        closestZ = palmZ;
-                        closestMarks = marks;
-                    }
-                });
-                const marks = closestMarks;
+                const marks = getNearestHand(res.multiHandLandmarks);
+                if (!marks) {
+                    beckonActive = false;
+                    lastPalmY = null;
+                    return;
+                }
                 const palmY = marks[9].y;
                 const palmMovingUp = lastPalmY !== null && (lastPalmY - palmY) > 0.012;
                 lastPalmY = palmY;
