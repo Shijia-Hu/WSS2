@@ -598,11 +598,20 @@ async function initMediaPipe() {
     if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
     try {
         const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
+        hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
         hands.onResults(res => {
             if (gesturePaused) return;
             if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
-                const marks = res.multiHandLandmarks[0];
+                let closestMarks = res.multiHandLandmarks[0];
+                let closestZ = Infinity;
+                res.multiHandLandmarks.forEach((marks) => {
+                    const palmZ = (marks[0].z + marks[5].z + marks[9].z + marks[13].z + marks[17].z) / 5;
+                    if (palmZ < closestZ) {
+                        closestZ = palmZ;
+                        closestMarks = marks;
+                    }
+                });
+                const marks = closestMarks;
                 const palmY = marks[9].y;
                 const palmMovingUp = lastPalmY !== null && (lastPalmY - palmY) > 0.012;
                 lastPalmY = palmY;
