@@ -619,8 +619,8 @@ function isInActiveZone(marks) {
     );
 }
 
-function isBeckoning(marks, palmMovingUp) {
-    return isFist(marks) && isPalmFacingCamera(marks) && palmMovingUp;
+function isBeckoning(marks) {
+    return isFist(marks) && isPalmFacingCamera(marks);
 }
 
 function smoothPalmX(palmX) {
@@ -667,7 +667,6 @@ async function initMediaPipe() {
                     return;
                 }
                 const palmY = marks[9].y;
-                const palmMovingUp = lastPalmY !== null && (lastPalmY - palmY) > 0.012;
                 lastPalmY = palmY;
                 const palmX = marks[9].x;
                 const palmXStable = smoothPalmX(palmX);
@@ -692,7 +691,7 @@ async function initMediaPipe() {
                     const ac = document.querySelector('.view-container.active .carousel');
                     if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
                 }
-                const beckoning = isInActiveZone(marks) && isBeckoning(marks, palmMovingUp);
+                const beckoning = isInActiveZone(marks) && isBeckoning(marks);
                 if (beckoning) {
                     beckonFrames = Math.min(beckonFrames + 1, BECKON_MIN_FRAMES);
                     if (!beckonActive) {
