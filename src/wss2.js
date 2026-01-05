@@ -146,9 +146,10 @@ let beckonActive = false;
 let gesturePaused = false;
 let lastPalmY = null;
 let lastPalmX = null;
-const SWIPE_TRAVEL_MIN = 0.02;
+const SWIPE_TRAVEL_MIN = 0.045;
 const SWIPE_ACTIVE_FRAMES = 6;
 const SWIPE_TRAVEL_DECAY = 0.9;
+const SWIPE_FRAME_DELTA_MIN = 0.008;
 let swipeFrames = 0;
 let beckonFrames = 0;
 let palmXSmoothed = null;
@@ -675,7 +676,8 @@ async function initMediaPipe() {
                 const palmOpenFacing = isInActiveZone(marks) && isPalmOpenFacingCamera(marks);
                 if (palmOpenFacing) {
                     swipeFrames = Math.min(swipeFrames + 1, SWIPE_MIN_FRAMES);
-                    palmTravel = (palmTravel + palmDelta) * SWIPE_TRAVEL_DECAY;
+                    const travelDelta = palmDelta >= SWIPE_FRAME_DELTA_MIN ? palmDelta : 0;
+                    palmTravel = (palmTravel + travelDelta) * SWIPE_TRAVEL_DECAY;
                     if (palmTravel >= SWIPE_TRAVEL_MIN) {
                         swipeActiveFrames = SWIPE_ACTIVE_FRAMES;
                     } else {
