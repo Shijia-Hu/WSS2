@@ -137,9 +137,9 @@ let currentView = 'view-intro';
 let CURRENT_PICK = null;
 let smoothedX = 0.5;
 const LERP_FACTOR = 0.08;
-const PINCH_THRESHOLD = 0.035;
-const PINCH_TIME = 900;
-let pinchStart = 0;
+const HOOK_THRESHOLD = 0.32;
+const THUMB_SEPARATION = 0.45;
+let hookActive = false;
 let timerInterval = null;
 const TIMER_BASE = 20;
 const TIMER_CAP = 30;
@@ -572,6 +572,7 @@ async function initMediaPipe() {
     try {
         const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
         hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
+        const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
         hands.onResults(res => {
             const cursor = document.getElementById('hand-cursor'), prog = document.getElementById('pinch-progress');
             if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
@@ -581,14 +582,22 @@ async function initMediaPipe() {
                 if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
                 const ac = document.querySelector('.view-container.active .carousel');
                 if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
-                const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
-                if (dist < PINCH_THRESHOLD) {
-                    if (pinchStart === 0) pinchStart = Date.now();
-                    const p = Math.min(1, (Date.now() - pinchStart) / PINCH_TIME);
+                const handSize = distance(marks[0], marks[9]);
+                const isIndexHooked = distance(marks[8], marks[6]) < handSize * HOOK_THRESHOLD;
+                const isThumbSeparated = distance(marks[4], marks[8]) > handSize * THUMB_SEPARATION;
+                if (isIndexHooked && isThumbSeparated) {
+                    if (!hookActive) {
+                        hookActive = true;
+                        const bar = document.getElementById('pinch-bar');
+                        if (bar) bar.style.clipPath = `inset(0 0 0 0)`;
+                        handleConfirm();
+                        if (prog) prog.style.display = 'none';
+                    }
+                } else {
+                    hookActive = false;
                     const bar = document.getElementById('pinch-bar');
-                    if (bar) bar.style.clipPath = `inset(${100 - p * 100}% 0 0 0)`;
-                    if (p >= 1) { handleConfirm(); pinchStart = 0; if (prog) prog.style.display = 'none'; }
-                } else { pinchStart = 0; const bar = document.getElementById('pinch-bar'); if (bar) bar.style.clipPath = `inset(100% 0 0 0)`; }
+                    if (bar) bar.style.clipPath = `inset(100% 0 0 0)`;
+                }
             } else { if (cursor) cursor.style.display = 'none'; if (prog) prog.style.display = 'none'; }
         });
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
