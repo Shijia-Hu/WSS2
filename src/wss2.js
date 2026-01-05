@@ -142,6 +142,8 @@ const ACTIVE_ZONE = { left: 0.2, right: 0.8, top: 0.1, bottom: 0.9 };
 let beckonActive = false;
 let gesturePaused = false;
 let lastPalmY = null;
+let lastPalmX = null;
+const SWIPE_DELTA = 0.015;
 let timerInterval = null;
 const TIMER_BASE = 20;
 const TIMER_CAP = 30;
@@ -592,6 +594,10 @@ function isPalmFacingCamera(marks) {
     return palmZ < wristZ - 0.02;
 }
 
+function isPalmOpenFacingCamera(marks) {
+    return isOpenPalm(marks) && isPalmFacingCamera(marks);
+}
+
 function isInActiveZone(marks) {
     const palmX = marks[9].x;
     const palmY = marks[9].y;
@@ -633,13 +639,17 @@ async function initMediaPipe() {
                 if (!marks) {
                     beckonActive = false;
                     lastPalmY = null;
+                    lastPalmX = null;
                     return;
                 }
                 const palmY = marks[9].y;
                 const palmMovingUp = lastPalmY !== null && (lastPalmY - palmY) > 0.012;
                 lastPalmY = palmY;
-                if (isInActiveZone(marks) && isOpenPalm(marks) && isPalmFacingCamera(marks)) {
-                    smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
+                const palmX = marks[9].x;
+                const palmMoved = lastPalmX !== null && Math.abs(palmX - lastPalmX) > SWIPE_DELTA;
+                lastPalmX = palmX;
+                if (isInActiveZone(marks) && isPalmOpenFacingCamera(marks) && palmMoved) {
+                    smoothedX += ((1 - palmX) - smoothedX) * LERP_FACTOR;
                     const ac = document.querySelector('.view-container.active .carousel');
                     if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
                 }
@@ -655,6 +665,7 @@ async function initMediaPipe() {
             } else {
                 beckonActive = false;
                 lastPalmY = null;
+                lastPalmX = null;
             }
         });
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
