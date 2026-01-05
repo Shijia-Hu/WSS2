@@ -136,20 +136,24 @@ let gatheredCount = 0;
 let currentView = 'view-intro';
 let CURRENT_PICK = null;
 let smoothedX = 0.5;
-const LERP_FACTOR = 0.08;
+const LERP_FACTOR = 0.12;
 const MAX_HAND_DEPTH = -0.02;
 const ACTIVE_ZONE = { left: 0.2, right: 0.8, top: 0.1, bottom: 0.9 };
 const SWIPE_MIN_FRAMES = 3;
 const BECKON_MIN_FRAMES = 3;
-const PALM_SMOOTH_FACTOR = 0.2;
+const PALM_SMOOTH_FACTOR = 0.25;
 let beckonActive = false;
 let gesturePaused = false;
 let lastPalmY = null;
 let lastPalmX = null;
-const SWIPE_DELTA = 0.015;
+const SWIPE_TRAVEL_MIN = 0.02;
+const SWIPE_ACTIVE_FRAMES = 6;
+const SWIPE_TRAVEL_DECAY = 0.9;
 let swipeFrames = 0;
 let beckonFrames = 0;
 let palmXSmoothed = null;
+let palmTravel = 0;
+let swipeActiveFrames = 0;
 let timerInterval = null;
 const TIMER_BASE = 20;
 const TIMER_CAP = 30;
@@ -658,6 +662,8 @@ async function initMediaPipe() {
                     palmXSmoothed = null;
                     swipeFrames = 0;
                     beckonFrames = 0;
+                    palmTravel = 0;
+                    swipeActiveFrames = 0;
                     return;
                 }
                 const palmY = marks[9].y;
@@ -665,15 +671,23 @@ async function initMediaPipe() {
                 lastPalmY = palmY;
                 const palmX = marks[9].x;
                 const palmXStable = smoothPalmX(palmX);
-                const palmMoved = lastPalmX !== null && Math.abs(palmXStable - lastPalmX) > SWIPE_DELTA;
+                const palmDelta = lastPalmX !== null ? Math.abs(palmXStable - lastPalmX) : 0;
                 lastPalmX = palmXStable;
                 const palmOpenFacing = isInActiveZone(marks) && isPalmOpenFacingCamera(marks);
                 if (palmOpenFacing) {
                     swipeFrames = Math.min(swipeFrames + 1, SWIPE_MIN_FRAMES);
+                    palmTravel = (palmTravel + palmDelta) * SWIPE_TRAVEL_DECAY;
+                    if (palmTravel >= SWIPE_TRAVEL_MIN) {
+                        swipeActiveFrames = SWIPE_ACTIVE_FRAMES;
+                    } else {
+                        swipeActiveFrames = Math.max(swipeActiveFrames - 1, 0);
+                    }
                 } else {
                     swipeFrames = 0;
+                    palmTravel = 0;
+                    swipeActiveFrames = 0;
                 }
-                if (palmOpenFacing && swipeFrames >= SWIPE_MIN_FRAMES && palmMoved) {
+                if (palmOpenFacing && swipeFrames >= SWIPE_MIN_FRAMES && swipeActiveFrames > 0) {
                     smoothedX += ((1 - palmXStable) - smoothedX) * LERP_FACTOR;
                     const ac = document.querySelector('.view-container.active .carousel');
                     if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
@@ -698,6 +712,8 @@ async function initMediaPipe() {
                 palmXSmoothed = null;
                 swipeFrames = 0;
                 beckonFrames = 0;
+                palmTravel = 0;
+                swipeActiveFrames = 0;
             }
         });
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
