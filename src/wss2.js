@@ -139,6 +139,8 @@ let smoothedX = 0.5;
 const LERP_FACTOR = 0.08;
 const PINCH_THRESHOLD = 0.035;
 const PINCH_TIME = 900;
+const FIST_DISTANCE_THRESHOLD = 0.12;
+const GRAB_RAISE_THRESHOLD = 0.08;
 let pinchStart = 0;
 let timerInterval = null;
 const TIMER_BASE = 20;
@@ -568,33 +570,101 @@ function setQuizFeedbackVisible(visible) {
 }
 
 async function initMediaPipe() {
-    if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
+    if (typeof window.Hands === 'undefined' || typeof window.Pose === 'undefined') { setTimeout(initMediaPipe, 500); return; }
     try {
         const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
+        hands.setOptions({ maxNumHands: 4, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
+        const pose = new window.Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
+        pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.65, minTrackingConfidence: 0.65 });
+        let latestPoseLandmarks = null;
+        let poseConfirmStart = 0;
+        let grabStartY = null;
+        const isSelectionView = () => document.querySelector('.view-container.active')?.id === 'view-selection';
+        const updateCursor = (x, y) => {
+            const cursor = document.getElementById('hand-cursor');
+            const prog = document.getElementById('pinch-progress');
+            smoothedX += ((1 - x) - smoothedX) * LERP_FACTOR;
+            if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${y * window.innerHeight}px`; }
+            if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${y * window.innerHeight}px`; }
+            const ac = document.querySelector('.view-container.active .carousel');
+            if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
+        };
+        const updateConfirmProgress = (active, startValue) => {
+            if (active) {
+                if (startValue === 0) startValue = Date.now();
+                const p = Math.min(1, (Date.now() - startValue) / PINCH_TIME);
+                const bar = document.getElementById('pinch-bar');
+                if (bar) bar.style.clipPath = `inset(${100 - p * 100}% 0 0 0)`;
+                if (p >= 1) { handleConfirm(); startValue = 0; const prog = document.getElementById('pinch-progress'); if (prog) prog.style.display = 'none'; }
+            } else {
+                startValue = 0;
+                const bar = document.getElementById('pinch-bar');
+                if (bar) bar.style.clipPath = `inset(100% 0 0 0)`;
+            }
+            return startValue;
+        };
         hands.onResults(res => {
             const cursor = document.getElementById('hand-cursor'), prog = document.getElementById('pinch-progress');
             if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
-                const marks = res.multiHandLandmarks[0];
-                smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
-                if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${marks[9].y * window.innerHeight}px`; }
-                if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
-                const ac = document.querySelector('.view-container.active .carousel');
-                if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
-                const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
-                if (dist < PINCH_THRESHOLD) {
-                    if (pinchStart === 0) pinchStart = Date.now();
-                    const p = Math.min(1, (Date.now() - pinchStart) / PINCH_TIME);
-                    const bar = document.getElementById('pinch-bar');
-                    if (bar) bar.style.clipPath = `inset(${100 - p * 100}% 0 0 0)`;
-                    if (p >= 1) { handleConfirm(); pinchStart = 0; if (prog) prog.style.display = 'none'; }
-                } else { pinchStart = 0; const bar = document.getElementById('pinch-bar'); if (bar) bar.style.clipPath = `inset(100% 0 0 0)`; }
-            } else { if (cursor) cursor.style.display = 'none'; if (prog) prog.style.display = 'none'; }
+                let marks = res.multiHandLandmarks[0];
+                if (res.multiHandLandmarks.length > 1) {
+                    let closestArea = -Infinity;
+                    res.multiHandLandmarks.forEach(handMarks => {
+                        let minX = 1, minY = 1, maxX = 0, maxY = 0;
+                        handMarks.forEach(mark => {
+                            minX = Math.min(minX, mark.x);
+                            minY = Math.min(minY, mark.y);
+                            maxX = Math.max(maxX, mark.x);
+                            maxY = Math.max(maxY, mark.y);
+                        });
+                        const area = (maxX - minX) * (maxY - minY);
+                        if (area > closestArea) { closestArea = area; marks = handMarks; }
+                    });
+                }
+                updateCursor(marks[9].x, marks[9].y);
+                if (isSelectionView()) {
+                    const palm = marks[9];
+                    const tipIndices = [8, 12, 16, 20];
+                    const avgDist = tipIndices.reduce((sum, idx) => sum + Math.hypot(marks[idx].x - palm.x, marks[idx].y - palm.y), 0) / tipIndices.length;
+                    const isFist = avgDist < FIST_DISTANCE_THRESHOLD;
+                    if (isFist && grabStartY === null) grabStartY = palm.y;
+                    if (!isFist) grabStartY = null;
+                    const grabbedUp = isFist && grabStartY !== null && (grabStartY - palm.y) > GRAB_RAISE_THRESHOLD;
+                    pinchStart = updateConfirmProgress(grabbedUp, pinchStart);
+                } else {
+                    grabStartY = null;
+                    const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
+                    pinchStart = updateConfirmProgress(dist < PINCH_THRESHOLD, pinchStart);
+                }
+                poseConfirmStart = 0;
+            } else if (latestPoseLandmarks && latestPoseLandmarks.length > 0) {
+                grabStartY = null;
+                const leftWrist = latestPoseLandmarks[15];
+                const rightWrist = latestPoseLandmarks[16];
+                const leftShoulder = latestPoseLandmarks[11];
+                const rightShoulder = latestPoseLandmarks[12];
+                if (leftWrist && rightWrist && leftShoulder && rightShoulder) {
+                    updateCursor(rightWrist.x, rightWrist.y);
+                    const shouldersY = Math.min(leftShoulder.y, rightShoulder.y);
+                    const handsRaised = leftWrist.y < shouldersY && rightWrist.y < shouldersY;
+                    poseConfirmStart = updateConfirmProgress(handsRaised, poseConfirmStart);
+                } else {
+                    if (cursor) cursor.style.display = 'none';
+                    if (prog) prog.style.display = 'none';
+                }
+            } else {
+                grabStartY = null;
+                if (cursor) cursor.style.display = 'none';
+                if (prog) prog.style.display = 'none';
+            }
+        });
+        pose.onResults(res => {
+            latestPoseLandmarks = res.poseLandmarks || null;
         });
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         const video = document.createElement('video');
         video.srcObject = stream;
-        video.onloadedmetadata = () => { video.play(); safeSetText('status-text', "CONSTELLATIONS ALIGNED: READY"); const update = async () => { try { await hands.send({ image: video }); } catch (e) { } requestAnimationFrame(update); }; update(); };
+        video.onloadedmetadata = () => { video.play(); safeSetText('status-text', "CONSTELLATIONS ALIGNED: READY"); const update = async () => { try { await hands.send({ image: video }); await pose.send({ image: video }); } catch (e) { } requestAnimationFrame(update); }; update(); };
     } catch (err) { safeSetText('status-text', "CAMERA NOT DETECTED"); }
 }
 
