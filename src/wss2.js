@@ -138,6 +138,7 @@ let CURRENT_PICK = null;
 let smoothedX = 0.5;
 const LERP_FACTOR = 0.08;
 const MAX_HAND_DEPTH = -0.02;
+const ACTIVE_ZONE = { left: 0.2, right: 0.8, top: 0.1, bottom: 0.9 };
 let beckonActive = false;
 let gesturePaused = false;
 let lastPalmY = null;
@@ -591,6 +592,17 @@ function isPalmFacingCamera(marks) {
     return palmZ < wristZ - 0.02;
 }
 
+function isInActiveZone(marks) {
+    const palmX = marks[9].x;
+    const palmY = marks[9].y;
+    return (
+        palmX >= ACTIVE_ZONE.left &&
+        palmX <= ACTIVE_ZONE.right &&
+        palmY >= ACTIVE_ZONE.top &&
+        palmY <= ACTIVE_ZONE.bottom
+    );
+}
+
 function isBeckoning(marks, palmMovingUp) {
     return isFist(marks) && isPalmFacingCamera(marks) && palmMovingUp;
 }
@@ -626,12 +638,12 @@ async function initMediaPipe() {
                 const palmY = marks[9].y;
                 const palmMovingUp = lastPalmY !== null && (lastPalmY - palmY) > 0.012;
                 lastPalmY = palmY;
-                if (isOpenPalm(marks) && isPalmFacingCamera(marks)) {
+                if (isInActiveZone(marks) && isOpenPalm(marks) && isPalmFacingCamera(marks)) {
                     smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
                     const ac = document.querySelector('.view-container.active .carousel');
                     if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
                 }
-                const beckoning = isBeckoning(marks, palmMovingUp);
+                const beckoning = isInActiveZone(marks) && isBeckoning(marks, palmMovingUp);
                 if (beckoning) {
                     if (!beckonActive) {
                         beckonActive = true;
