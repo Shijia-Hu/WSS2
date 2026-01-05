@@ -374,7 +374,7 @@ function initMouseDrag(el) {
     const stopDrag = () => { isDown = false; };
     const moveDrag = (pageX) => {
         if (!isDown) return;
-        el.scrollLeft = scrollLeft - (pageX - el.offsetLeft - startX) * 1.5;
+        el.scrollLeft = scrollLeft - (pageX - el.offsetLeft - startX) * 0.9;
         updateFisheye(el);
     };
     el.addEventListener('mousedown', (e) => { startDrag(e.pageX); });
