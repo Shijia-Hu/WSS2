@@ -222,9 +222,12 @@ function initCarouselDOM(el, isGathering = false) {
     el.innerHTML = '';
     const leftPad = document.createElement('div'); leftPad.className = 'carousel-padding'; el.appendChild(leftPad);
 
-    const items = isGathering ? Array.from({ length: 32 }) : SELECTED_16;
-    if (!isGathering) safeSetText('round-count', items.length);
+    const baseItems = isGathering ? Array.from({ length: 32 }) : SELECTED_16;
+    const repeatCount = 3;
+    const items = Array.from({ length: repeatCount }, () => baseItems).flat();
+    if (!isGathering) safeSetText('round-count', baseItems.length);
     items.forEach((q, i) => {
+        const baseIndex = i % baseItems.length;
         const item = document.createElement('div');
         item.className = 'carousel-item';
         const card = document.createElement('div');
@@ -235,7 +238,7 @@ function initCarouselDOM(el, isGathering = false) {
         imgLayer.className = 'card-img-bg';
 
         if (UPLOADED_IMAGES.length > 0) {
-            const imgIndex = i % UPLOADED_IMAGES.length;
+            const imgIndex = baseIndex % UPLOADED_IMAGES.length;
             imgLayer.style.backgroundImage = `url(${UPLOADED_IMAGES[imgIndex]})`;
         }
 
@@ -261,7 +264,7 @@ function initCarouselDOM(el, isGathering = false) {
             card.innerHTML += `
                         <div class="z-10 flex flex-col items-center">
                             <span class="opacity-40 text-[9px] cinzel mb-1 text-white">VESSEL</span>
-                            <span class="text-4xl font-bold cinzel text-white" style="text-shadow: 0 0 15px ${color}">${i + 1}</span>
+                            <span class="text-4xl font-bold cinzel text-white" style="text-shadow: 0 0 15px ${color}">${baseIndex + 1}</span>
                         </div>
                     `;
             card.onclick = () => { if (isCenter(card)) { CURRENT_PICK = q; performSelectionMagic(card, el, startQuiz, false); } };
@@ -271,7 +274,12 @@ function initCarouselDOM(el, isGathering = false) {
     });
 
     const rightPad = document.createElement('div'); rightPad.className = 'carousel-padding'; el.appendChild(rightPad);
-    el.scrollLeft = 0; updateFisheye(el);
+    requestAnimationFrame(() => {
+        const segmentWidth = el.scrollWidth / repeatCount;
+        el.dataset.segmentWidth = `${segmentWidth}`;
+        el.scrollLeft = segmentWidth;
+        updateFisheye(el);
+    });
 }
 
 // 轻量氛围光尘
@@ -301,9 +309,12 @@ function initCarouselDOM(el, isGathering = false) {
 })();
 
 function isCenter(card) {
-    const rect = card.getBoundingClientRect();
-    const center = window.innerWidth / 2;
-    return Math.abs((rect.left + rect.width / 2) - center) < 120;
+    const item = card.closest('.carousel-item');
+    const carousel = card.closest('.carousel');
+    if (!item || !carousel) return false;
+    const center = carousel.scrollLeft + carousel.clientWidth / 2;
+    const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+    return Math.abs(itemCenter - center) < 120;
 }
 
 function updateFisheye(el) {
@@ -323,6 +334,38 @@ function updateFisheye(el) {
 function initMouseDrag(el) {
     if (!el) return;
     let isDown = false, startX, scrollLeft;
+    let isWrapping = false;
+    const handleInfiniteScroll = () => {
+        const segmentWidth = Number(el.dataset.segmentWidth || 0);
+        if (!segmentWidth) return;
+        if (el.scrollLeft <= segmentWidth * 0.5) {
+            isWrapping = true;
+            el.scrollLeft += segmentWidth;
+            isWrapping = false;
+            return;
+        }
+        if (el.scrollLeft >= segmentWidth * 1.5) {
+            isWrapping = true;
+            el.scrollLeft -= segmentWidth;
+            isWrapping = false;
+        }
+    };
+    const wrapCarouselScroll = () => {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        const threshold = 4;
+        if (maxScroll <= threshold) return;
+        if (el.scrollLeft <= threshold) {
+            isWrapping = true;
+            el.scrollLeft = maxScroll - threshold;
+            isWrapping = false;
+            return;
+        }
+        if (el.scrollLeft >= maxScroll - threshold) {
+            isWrapping = true;
+            el.scrollLeft = threshold;
+            isWrapping = false;
+        }
+    };
     const startDrag = (pageX) => {
         isDown = true;
         startX = pageX - el.offsetLeft;
@@ -352,7 +395,10 @@ function initMouseDrag(el) {
         e.preventDefault();
         moveDrag(e.touches[0].pageX);
     }, { passive: false });
-    el.addEventListener('scroll', () => updateFisheye(el));
+    el.addEventListener('scroll', () => {
+        if (!isWrapping) handleInfiniteScroll();
+        updateFisheye(el);
+    });
 }
 
 function startRitual() {
@@ -441,7 +487,7 @@ function startQuiz() {
             b.innerText = opt; b.onclick = () => checkAnswer(i); opts.appendChild(b);
         });
     }
-    const f = document.getElementById('quiz-feedback'); if (f) f.style.opacity = '0';
+    setQuizFeedbackVisible(false);
     switchView('view-quiz', initTimer);
 }
 
@@ -478,11 +524,10 @@ function addExtraTime() {
 }
 
 function handleTimeout() {
-    const f = document.getElementById('quiz-feedback');
     document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
     const m = document.getElementById('feedback-msg');
     if (m) { m.innerText = "MAGIC DEPLETED! THE SEAL REMAINS."; m.style.color = "var(--glinda)"; }
-    if (f) f.style.opacity = '1';
+    setQuizFeedbackVisible(true);
     timerRemaining = 0;
     updateTimerUI();
     setExtraTimeButtonState(false);
@@ -490,7 +535,7 @@ function handleTimeout() {
 
 function checkAnswer(idx) {
     clearInterval(timerInterval);
-    const f = document.getElementById('quiz-feedback'); const m = document.getElementById('feedback-msg');
+    const m = document.getElementById('feedback-msg');
     document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
     if (idx === CURRENT_PICK.correct) {
         if (m) { m.innerText = "POPULAR! THE ENERGY IS RELEASED."; m.style.color = "var(--elphaba)"; }
@@ -499,7 +544,7 @@ function checkAnswer(idx) {
     } else {
         if (m) { m.innerText = "FAILED. THE SEAL IS RETIGHTENED."; m.style.color = "var(--glinda)"; }
     }
-    if (f) f.style.opacity = '1';
+    setQuizFeedbackVisible(true);
     setExtraTimeButtonState(false);
 }
 
@@ -513,6 +558,14 @@ function backToSelection() {
 
 function showMessage(t, c) { safeSetText('msg-title', t); safeSetText('msg-content', c); document.getElementById('message-box').style.display = 'flex'; }
 function hideMessage() { document.getElementById('message-box').style.display = 'none'; }
+
+function setQuizFeedbackVisible(visible) {
+    const feedback = document.getElementById('quiz-feedback');
+    if (!feedback) return;
+    feedback.style.opacity = visible ? '1' : '0';
+    feedback.style.pointerEvents = visible ? 'auto' : 'none';
+    feedback.style.transform = visible ? 'translateY(0)' : 'translateY(8px)';
+}
 
 async function initMediaPipe() {
     if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
