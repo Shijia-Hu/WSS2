@@ -673,8 +673,8 @@ async function initMediaPipe() {
                 const palmXStable = smoothPalmX(palmX);
                 const palmDelta = lastPalmX !== null ? Math.abs(palmXStable - lastPalmX) : 0;
                 lastPalmX = palmXStable;
-                const palmOpenFacing = isInActiveZone(marks) && isPalmOpenFacingCamera(marks);
-                if (palmOpenFacing) {
+                const palmInZone = isInActiveZone(marks);
+                if (palmInZone) {
                     swipeFrames = Math.min(swipeFrames + 1, SWIPE_MIN_FRAMES);
                     const travelDelta = palmDelta >= SWIPE_FRAME_DELTA_MIN ? palmDelta : 0;
                     palmTravel = (palmTravel + travelDelta) * SWIPE_TRAVEL_DECAY;
@@ -688,7 +688,7 @@ async function initMediaPipe() {
                     palmTravel = 0;
                     swipeActiveFrames = 0;
                 }
-                if (palmOpenFacing && swipeFrames >= SWIPE_MIN_FRAMES && swipeActiveFrames > 0) {
+                if (palmInZone && swipeFrames >= SWIPE_MIN_FRAMES && swipeActiveFrames > 0) {
                     smoothedX += ((1 - palmXStable) - smoothedX) * LERP_FACTOR;
                     const ac = document.querySelector('.view-container.active .carousel');
                     if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
