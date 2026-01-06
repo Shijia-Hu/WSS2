@@ -408,24 +408,6 @@
             box-shadow: inset 0 0 12px rgba(197, 160, 89, 0.12);
         }
 
-        #hand-cursor {
-            position: fixed; width: 22px; height: 22px; border-radius: 50%;
-            background: #fff; z-index: 5000; pointer-events: none;
-            box-shadow: 0 0 20px #fff, 0 0 40px var(--elphaba);
-            display: none; transform: translate(-50%, -50%); mix-blend-mode: difference;
-        }
-
-        #pinch-progress {
-            position: fixed; width: 85px; height: 85px; border-radius: 50%;
-            border: 2px solid rgba(212, 175, 55, 0.1); pointer-events: none;
-            z-index: 4999; display: none; transform: translate(-50%, -50%);
-        }
-        #pinch-bar {
-            position: absolute; inset: -2px; border-radius: 50%;
-            border: 4px solid var(--oz-gold); clip-path: inset(100% 0 0 0);
-            transition: clip-path 0.1s linear;
-        }
-
         .glass-panel {
             background:
                 radial-gradient(120% 90% at 50% 20%, rgba(255, 255, 255, 0.12), transparent 55%),

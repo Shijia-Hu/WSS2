@@ -135,11 +135,6 @@ let UPLOADED_IMAGES = [];
 let gatheredCount = 0;
 let currentView = 'view-intro';
 let CURRENT_PICK = null;
-let smoothedX = 0.5;
-const LERP_FACTOR = 0.08;
-const PINCH_THRESHOLD = 0.035;
-const PINCH_TIME = 900;
-let pinchStart = 0;
 let timerInterval = null;
 const TIMER_BASE = 20;
 const TIMER_CAP = 30;
@@ -567,55 +562,9 @@ function setQuizFeedbackVisible(visible) {
     feedback.style.transform = visible ? 'translateY(0)' : 'translateY(8px)';
 }
 
-async function initMediaPipe() {
-    if (typeof window.Hands === 'undefined') { setTimeout(initMediaPipe, 500); return; }
-    try {
-        const hands = new window.Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75, minTrackingConfidence: 0.75 });
-        hands.onResults(res => {
-            const cursor = document.getElementById('hand-cursor'), prog = document.getElementById('pinch-progress');
-            if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
-                const marks = res.multiHandLandmarks[0];
-                smoothedX += ((1 - marks[9].x) - smoothedX) * LERP_FACTOR;
-                if (cursor) { cursor.style.display = 'block'; cursor.style.left = `${smoothedX * window.innerWidth}px`; cursor.style.top = `${marks[9].y * window.innerHeight}px`; }
-                if (prog) { prog.style.display = 'block'; prog.style.left = `${smoothedX * window.innerWidth}px`; prog.style.top = `${marks[9].y * window.innerHeight}px`; }
-                const ac = document.querySelector('.view-container.active .carousel');
-                if (ac && !ac.classList.contains('focus-mode')) ac.scrollLeft = smoothedX * (ac.scrollWidth - ac.clientWidth);
-                const dist = Math.sqrt(Math.pow(marks[4].x - marks[8].x, 2) + Math.pow(marks[4].y - marks[8].y, 2));
-                if (dist < PINCH_THRESHOLD) {
-                    if (pinchStart === 0) pinchStart = Date.now();
-                    const p = Math.min(1, (Date.now() - pinchStart) / PINCH_TIME);
-                    const bar = document.getElementById('pinch-bar');
-                    if (bar) bar.style.clipPath = `inset(${100 - p * 100}% 0 0 0)`;
-                    if (p >= 1) { handleConfirm(); pinchStart = 0; if (prog) prog.style.display = 'none'; }
-                } else { pinchStart = 0; const bar = document.getElementById('pinch-bar'); if (bar) bar.style.clipPath = `inset(100% 0 0 0)`; }
-            } else { if (cursor) cursor.style.display = 'none'; if (prog) prog.style.display = 'none'; }
-        });
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const video = document.createElement('video');
-        video.srcObject = stream;
-        video.onloadedmetadata = () => { video.play(); safeSetText('status-text', "CONSTELLATIONS ALIGNED: READY"); const update = async () => { try { await hands.send({ image: video }); } catch (e) { } requestAnimationFrame(update); }; update(); };
-    } catch (err) { safeSetText('status-text', "CAMERA NOT DETECTED"); }
-}
-
-function handleConfirm() {
-    const el = document.querySelector('.view-container.active .carousel');
-    if (!el) return;
-    const center = window.innerWidth / 2;
-    const items = el.querySelectorAll('.arched-card');
-    let closest = null, minDist = Infinity;
-    items.forEach(it => {
-        const rect = it.getBoundingClientRect();
-        const d = Math.abs((rect.left + rect.width / 2) - center);
-        if (d < minDist) { minDist = d; closest = it; }
-    });
-    if (closest && minDist < 120) closest.click();
-}
-
 async function initApp() {
     await loadInitialAssets();
     updatePoolUI();
-    initMediaPipe();
 }
 
 window.onload = () => { initApp(); };
