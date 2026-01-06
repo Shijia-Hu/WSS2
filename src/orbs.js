@@ -155,7 +155,7 @@ function resetOrbs() {
 }
 
 renderOrbs();
-updateCounter();
+showAll();
 focusPanel.classList.add("hidden");
 
 bc.addEventListener("message", (event) => {
