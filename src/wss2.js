@@ -250,9 +250,10 @@ function normalizeImages(list, targetCount = 16) {
 }
 
 async function loadInitialAssets() {
+    const baseUrl = import.meta.env.BASE_URL || "/";
     const [questions, images] = await Promise.all([
-        loadJsonAsset("/data/questions.json"),
-        loadJsonAsset("/data/images.json"),
+        loadJsonAsset(`${baseUrl}data/questions.json`),
+        loadJsonAsset(`${baseUrl}data/images.json`),
     ]);
 
     if (Array.isArray(questions) && questions.length >= 16) {
