@@ -63,6 +63,8 @@ const COMMAND_HANDLERS = {
     SEAL: (payload) => director.showSeal(payload.roundId, payload.winner || "本轮胜队"),
     FINAL: () => director.showFinalReveal(),
     OVERLAY_HIDE: () => director.hideOverlay(),
+    MAIN_VISUAL_SHOW: () => director.showMainVisual(),
+    MAIN_VISUAL_HIDE: () => director.hideMainVisual(),
     QUIZ_PAUSE: (payload) => setQuizPausedFromHost(payload?.paused === true),
     ORB_SHOW_ALL: () => director.showOverlay({
         title: "魔法球规则",
