@@ -62,7 +62,7 @@ document.body.addEventListener("click", (e) => {
     const teamId = btn.dataset.team;
     if (teamId) {
         const auto = true; // 默认自动重放单队（你也可以改成读取某个开关）
-        send("TEAM_SHOW", { teamId, auto, ...timings() });
+        send("TEAMS_SHOW", { teamId, auto, ...timings() });
         return;
     }
 
