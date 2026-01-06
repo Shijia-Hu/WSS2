@@ -150,6 +150,7 @@ let timerRemaining = 0;
 let timerMax = 0;
 let timerUpdatedAt = null;
 let timerRunning = false;
+let quizPaused = false;
 let quizFeedbackVisible = false;
 let lastFeedbackMessage = "";
 let lastFeedbackColor = "";
@@ -243,6 +244,7 @@ function buildProgressState() {
         gatheredCount,
         currentView,
         timerState,
+        quizPaused,
         quizFeedbackVisible,
         lastFeedbackMessage,
         lastFeedbackColor,
@@ -313,6 +315,7 @@ function restoreProgress() {
             || null;
     }
     quizFeedbackVisible = Boolean(pendingRestoreState.quizFeedbackVisible);
+    quizPaused = Boolean(pendingRestoreState.quizPaused);
     lastFeedbackMessage = pendingRestoreState.lastFeedbackMessage || "";
     lastFeedbackColor = pendingRestoreState.lastFeedbackColor || "";
     updatePoolUI();
@@ -335,9 +338,9 @@ function restoreProgress() {
         switchView("view-shuffling", startShuffle);
     } else if (targetView === "view-quiz" && CURRENT_PICK) {
         const timerState = calculateTimerFromState(pendingRestoreState.timerState);
-        const shouldRunTimer = Boolean(timerState?.running) && !quizFeedbackVisible;
+        const shouldRunTimer = Boolean(timerState?.running) && !quizFeedbackVisible && !quizPaused;
         switchView("view-quiz", () => {
-            renderQuizFromState(CURRENT_PICK, timerState, quizFeedbackVisible, shouldRunTimer);
+            renderQuizFromState(CURRENT_PICK, timerState, quizFeedbackVisible, shouldRunTimer, quizPaused);
         });
     } else if (targetView === "view-quiz") {
         switchView("view-selection", () => {
@@ -645,6 +648,8 @@ function startQuiz() {
         });
     }
     setQuizFeedbackVisible(false);
+    quizPaused = false;
+    applyQuizPauseVisuals(false);
     switchView('view-quiz', initTimer);
     saveProgress();
 }
@@ -654,6 +659,28 @@ function updateTimerUI() {
     const text = document.getElementById('timer-text');
     if (bar && timerMax > 0) bar.style.width = `${(timerRemaining / timerMax) * 100}%`;
     if (text) text.innerText = `剩余 ${Math.max(0, Math.ceil(timerRemaining))}s`;
+}
+
+function updatePauseButtonUI(paused) {
+    const btn = document.getElementById('quiz-pause-btn');
+    if (!btn) return;
+    btn.innerText = paused ? "继续" : "暂停";
+    btn.setAttribute("aria-pressed", paused ? "true" : "false");
+}
+
+function applyQuizPauseVisuals(paused) {
+    const body = document.getElementById('quiz-body');
+    if (body) body.classList.toggle('is-paused', paused);
+    updatePauseButtonUI(paused);
+}
+
+function startTimerInterval() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timerRemaining -= 0.1;
+        updateTimerUI();
+        if (timerRemaining <= 0) { clearInterval(timerInterval); handleTimeout(); }
+    }, 100);
 }
 
 function setExtraTimeButtonState(enabled) {
@@ -669,11 +696,7 @@ function initTimer() {
     setExtraTimeButtonState(true);
     timerRunning = true;
     timerUpdatedAt = Date.now();
-    timerInterval = setInterval(() => {
-        timerRemaining -= 0.1;
-        updateTimerUI();
-        if (timerRemaining <= 0) { clearInterval(timerInterval); handleTimeout(); }
-    }, 100);
+    startTimerInterval();
     saveProgress();
 }
 
@@ -684,6 +707,29 @@ function addExtraTime() {
     timerUpdatedAt = Date.now();
     updateTimerUI();
     saveProgress();
+}
+
+function setQuizPaused(paused) {
+    if (quizPaused === paused) return;
+    quizPaused = paused;
+    applyQuizPauseVisuals(quizPaused);
+    document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = quizPaused || quizFeedbackVisible);
+    if (quizPaused) {
+        if (timerInterval) clearInterval(timerInterval);
+        timerRunning = false;
+        timerUpdatedAt = Date.now();
+    } else if (!quizFeedbackVisible && timerRemaining > 0) {
+        timerRunning = true;
+        timerUpdatedAt = Date.now();
+        startTimerInterval();
+    }
+    setExtraTimeButtonState(!quizPaused && !quizFeedbackVisible && timerRemaining > 0);
+    saveProgress();
+}
+
+function togglePause() {
+    if (currentView !== "view-quiz" || !CURRENT_PICK) return;
+    setQuizPaused(!quizPaused);
 }
 
 function handleTimeout() {
@@ -698,6 +744,8 @@ function handleTimeout() {
     setExtraTimeButtonState(false);
     timerRunning = false;
     timerUpdatedAt = Date.now();
+    quizPaused = false;
+    applyQuizPauseVisuals(false);
     saveProgress();
 }
 
@@ -720,6 +768,8 @@ function checkAnswer(idx) {
     setExtraTimeButtonState(false);
     timerRunning = false;
     timerUpdatedAt = Date.now();
+    quizPaused = false;
+    applyQuizPauseVisuals(false);
     saveProgress();
 }
 
@@ -731,6 +781,8 @@ function backToSelection() {
     updatePoolUI();
     timerRunning = false;
     timerUpdatedAt = Date.now();
+    quizPaused = false;
+    applyQuizPauseVisuals(false);
     saveProgress();
 }
 
@@ -746,7 +798,7 @@ function setQuizFeedbackVisible(visible) {
     quizFeedbackVisible = visible;
 }
 
-function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer) {
+function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer, isPaused = false) {
     safeSetText('quiz-text', pick.question);
     safeSetText('quiz-tag', `CHAMBER #${Math.floor(pick.uid % 10000)}`);
     const opts = document.getElementById('quiz-options');
@@ -757,7 +809,7 @@ function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer) {
             b.className = 'quiz-opt-btn w-full py-6 px-8 bg-white/5 border-2 border-[var(--lead)] rounded-2xl hover:bg-white/10 hover:border-oz-gold transition-all text-left text-sm outline-none active:scale-95 cinzel tracking-widest';
             b.innerText = opt;
             b.onclick = () => checkAnswer(i);
-            b.disabled = showFeedback;
+            b.disabled = showFeedback || isPaused;
             opts.appendChild(b);
         });
     }
@@ -770,6 +822,8 @@ function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer) {
     }
     updateTimerUI();
     setQuizFeedbackVisible(showFeedback);
+    quizPaused = Boolean(isPaused);
+    applyQuizPauseVisuals(quizPaused);
     if (showFeedback) {
         const msg = document.getElementById('feedback-msg');
         if (msg) {
@@ -777,16 +831,12 @@ function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer) {
             msg.style.color = lastFeedbackColor;
         }
     }
-    setExtraTimeButtonState(!showFeedback && timerRemaining > 0);
+    setExtraTimeButtonState(!showFeedback && !quizPaused && timerRemaining > 0);
     if (timerInterval) clearInterval(timerInterval);
     if (shouldRunTimer) {
         timerRunning = true;
         timerUpdatedAt = Date.now();
-        timerInterval = setInterval(() => {
-            timerRemaining -= 0.1;
-            updateTimerUI();
-            if (timerRemaining <= 0) { clearInterval(timerInterval); handleTimeout(); }
-        }, 100);
+        startTimerInterval();
     } else {
         timerRunning = false;
         timerUpdatedAt = Date.now();
@@ -807,6 +857,7 @@ window.onload = () => { initApp(); };
 const actions = {
     startRitual,
     addExtraTime,
+    togglePause,
     backToSelection,
     hideMessage,
     restoreProgress,

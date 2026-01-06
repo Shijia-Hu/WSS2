@@ -87,14 +87,20 @@
                 <div id="timer-bar"></div>
                 <div id="timer-text">剩余 20s</div>
             </div>
+            <button id="quiz-pause-btn" class="pause-btn" data-action="togglePause" type="button" aria-pressed="false">
+                暂停
+            </button>
             <button class="magic-orb-btn" data-action="addExtraTime" type="button" aria-label="加时 5 秒">
                 <span class="orb-core">🔮</span>
                 <span class="orb-label">加时</span>
             </button>
-            <div id="quiz-tag" class="text-[9px] mb-8 tracking-[0.6em] uppercase text-oz-gold opacity-50">Sacred Chamber
+            <div id="quiz-body" class="quiz-body">
+                <div id="quiz-tag" class="text-[9px] mb-8 tracking-[0.6em] uppercase text-oz-gold opacity-50">
+                    Sacred Chamber
+                </div>
+                <h3 id="quiz-text" class="text-2xl md:text-3xl mb-16 leading-relaxed font-light italic"></h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="quiz-options"></div>
             </div>
-            <h3 id="quiz-text" class="text-2xl md:text-3xl mb-16 leading-relaxed font-light italic"></h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="quiz-options"></div>
             <div id="quiz-feedback" class="mt-12 opacity-0 transition-all duration-700">
                 <p id="feedback-msg" class="text-xl font-bold tracking-widest mb-10"></p>
                 <button data-action="backToSelection" class="btn-oz">确认并返回</button>
