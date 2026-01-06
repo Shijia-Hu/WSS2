@@ -111,6 +111,18 @@
         </div>
     </div>
 
+    <!-- 进度恢复提示 -->
+    <div id="restore-modal" class="fixed inset-0 z-[7100] hidden items-center justify-center bg-black/80">
+        <div class="glass-panel p-8 max-w-sm text-center">
+            <h3 class="font-['Cinzel'] text-oz-gold text-xl mb-4">恢复进度</h3>
+            <p class="text-sm mb-8 leading-relaxed">检测到上次未完成的仪式进度，是否继续？</p>
+            <div class="flex flex-col gap-4">
+                <button data-action="restoreProgress" class="btn-oz w-full">恢复进度</button>
+                <button data-action="restartProgress" class="btn-oz w-full bg-white/10">重新开始</button>
+            </div>
+        </div>
+    </div>
+
     <div class="frameLayer">
         <img src="./assets/frame/frame_full.png" alt="" onerror="this.style.display='none'">
     </div>
