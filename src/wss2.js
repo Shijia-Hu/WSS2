@@ -135,8 +135,8 @@ const DEFAULT_POOL = [
     { "question": "《For Good》关于什么？", "options": ["友谊", "复仇", "爱情", "权力"], "correct": 0 }
 ];
 
-let MASTER_POOL = JSON.parse(JSON.stringify(DEFAULT_POOL));
-let BASE_POOL = JSON.parse(JSON.stringify(DEFAULT_POOL));
+let MASTER_POOL = [];
+let BASE_POOL = [];
 let SELECTED_16 = [];
 let UPLOADED_IMAGES = [];
 let gatheredCount = 0;
@@ -158,9 +158,61 @@ let lastGatherColor = null;
 const STORAGE_KEY = "wss2-progress";
 let pendingRestoreState = null;
 
+function splitQuestionText(question) {
+    if (!question) return { primary: "", secondary: "" };
+    const trimmed = question.trim();
+    const match = trimmed.match(/^(.*?)[（(]([^()（）]+)[)）]\s*$/);
+    if (match) {
+        return { primary: match[1].trim(), secondary: match[2].trim() };
+    }
+    return { primary: trimmed, secondary: "" };
+}
+
+function normalizeQuestionItem(item, index) {
+    const qid = item.no ?? item.id ?? index;
+    let primary = "";
+    let secondary = "";
+    if (item.question_EN || item.question_CN) {
+        primary = item.question_EN ?? "";
+        secondary = item.question_CN ?? "";
+    } else if (item.question) {
+        ({ primary, secondary } = splitQuestionText(item.question));
+    }
+    const optionsPrimary = item.options_EN ?? item.options ?? [];
+    const optionsSecondary = item.options_CN ?? [];
+    return {
+        qid,
+        questionPrimary: primary,
+        questionSecondary: secondary,
+        optionsPrimary,
+        optionsSecondary,
+        correct: item.correct,
+        legacyQuestion: item.question ?? item.question_EN ?? "",
+    };
+}
+
+function ensureQuestionFields(question) {
+    if (!question) return question;
+    if (!question.questionPrimary) {
+        const { primary, secondary } = splitQuestionText(question.question ?? question.legacyQuestion ?? "");
+        question.questionPrimary = primary;
+        if (!question.questionSecondary) question.questionSecondary = secondary;
+    }
+    if (!question.optionsPrimary && Array.isArray(question.options)) {
+        question.optionsPrimary = question.options;
+    }
+    if (!Array.isArray(question.optionsSecondary)) {
+        question.optionsSecondary = [];
+    }
+    if (question.qid == null) {
+        question.qid = question.no ?? question.id ?? question.question ?? question.legacyQuestion;
+    }
+    return question;
+}
+
 function getRemainingQuestions() {
-    const picked = new Set(SELECTED_16.map(q => q.question));
-    return MASTER_POOL.filter(q => !picked.has(q.question));
+    const picked = new Set(SELECTED_16.map(q => q.qid));
+    return MASTER_POOL.filter(q => !picked.has(q.qid));
 }
 
 function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
@@ -204,12 +256,10 @@ async function loadInitialAssets() {
     ]);
 
     if (Array.isArray(questions) && questions.length >= 16) {
-        MASTER_POOL = questions.map((item, index) => ({
-            id: Date.now() + index,
-            question: item.question,
-            options: item.options,
-            correct: item.correct,
-        }));
+        MASTER_POOL = questions.map((item, index) => normalizeQuestionItem(item, index));
+    }
+    if (MASTER_POOL.length === 0) {
+        MASTER_POOL = DEFAULT_POOL.map((item, index) => normalizeQuestionItem(item, index));
     }
 
     BASE_POOL = JSON.parse(JSON.stringify(MASTER_POOL));
@@ -219,13 +269,16 @@ async function loadInitialAssets() {
 function buildProgressState() {
     const removedQuestions = deriveRemovedQuestions(BASE_POOL, MASTER_POOL);
     const selectedQuestions = SELECTED_16.map(q => ({
-        question: q.question,
+        qid: q.qid,
         soulColor: q.soulColor,
         uid: q.uid,
     }));
     const currentPick = CURRENT_PICK ? {
-        question: CURRENT_PICK.question,
-        options: CURRENT_PICK.options,
+        qid: CURRENT_PICK.qid,
+        questionPrimary: CURRENT_PICK.questionPrimary,
+        questionSecondary: CURRENT_PICK.questionSecondary,
+        optionsPrimary: CURRENT_PICK.optionsPrimary,
+        optionsSecondary: CURRENT_PICK.optionsSecondary,
         correct: CURRENT_PICK.correct,
         soulColor: CURRENT_PICK.soulColor,
         uid: CURRENT_PICK.uid,
@@ -237,7 +290,7 @@ function buildProgressState() {
         updatedAt: timerUpdatedAt,
     };
     return {
-        version: 1,
+        version: 2,
         removedQuestions,
         selectedQuestions,
         currentPick,
@@ -310,9 +363,13 @@ function restoreProgress() {
     CURRENT_PICK = null;
     if (pendingRestoreState.currentPick) {
         CURRENT_PICK = SELECTED_16.find(q => q.uid === pendingRestoreState.currentPick.uid)
-            || SELECTED_16.find(q => q.question === pendingRestoreState.currentPick.question)
+            || SELECTED_16.find(q => q.qid === pendingRestoreState.currentPick.qid)
+            || SELECTED_16.find(q => q.legacyQuestion === pendingRestoreState.currentPick.question)
             || pendingRestoreState.currentPick
             || null;
+    }
+    if (CURRENT_PICK) {
+        ensureQuestionFields(CURRENT_PICK);
     }
     quizFeedbackVisible = Boolean(pendingRestoreState.quizFeedbackVisible);
     quizPaused = Boolean(pendingRestoreState.quizPaused);
@@ -620,6 +677,16 @@ function handleGather(color) {
     saveProgress();
 }
 
+function setQuizQuestionText(primary, secondary = "") {
+    const primaryEl = document.getElementById('quiz-text-primary');
+    const secondaryEl = document.getElementById('quiz-text-secondary');
+    if (primaryEl) primaryEl.innerText = primary;
+    if (secondaryEl) {
+        secondaryEl.innerText = secondary;
+        secondaryEl.style.display = secondary ? '' : 'none';
+    }
+}
+
 function startShuffle() {
     const deck = document.getElementById('shuffle-deck');
     if (!deck) return;
@@ -636,15 +703,27 @@ function startShuffle() {
 
 function startQuiz() {
     if (!CURRENT_PICK) return;
-    safeSetText('quiz-text', CURRENT_PICK.question);
+    setQuizQuestionText(CURRENT_PICK.questionPrimary, CURRENT_PICK.questionSecondary);
     safeSetText('quiz-tag', `CHAMBER #${Math.floor(CURRENT_PICK.uid % 10000)}`);
     const opts = document.getElementById('quiz-options');
     if (opts) {
         opts.innerHTML = '';
-        CURRENT_PICK.options.forEach((opt, i) => {
+        CURRENT_PICK.optionsPrimary.forEach((opt, i) => {
             const b = document.createElement('button');
             b.className = 'quiz-opt-btn w-full py-6 px-8 bg-white/5 border-2 border-[var(--lead)] rounded-2xl hover:bg-white/10 hover:border-oz-gold transition-all text-left text-sm outline-none active:scale-95 cinzel tracking-widest';
-            b.innerText = opt; b.onclick = () => checkAnswer(i); opts.appendChild(b);
+            const label = document.createElement('span');
+            label.className = 'quiz-opt-label';
+            label.innerText = opt;
+            b.appendChild(label);
+            const secondary = CURRENT_PICK.optionsSecondary?.[i];
+            if (secondary) {
+                const subLabel = document.createElement('span');
+                subLabel.className = 'quiz-opt-sub';
+                subLabel.innerText = secondary;
+                b.appendChild(subLabel);
+            }
+            b.onclick = () => checkAnswer(i);
+            opts.appendChild(b);
         });
     }
     setQuizFeedbackVisible(false);
@@ -757,7 +836,7 @@ function checkAnswer(idx) {
         lastFeedbackMessage = "POPULAR! THE ENERGY IS RELEASED.";
         lastFeedbackColor = "var(--elphaba)";
         if (m) { m.innerText = lastFeedbackMessage; m.style.color = lastFeedbackColor; }
-        MASTER_POOL = MASTER_POOL.filter(q => q.question !== CURRENT_PICK.question);
+        MASTER_POOL = MASTER_POOL.filter(q => q.qid !== CURRENT_PICK.qid);
         SELECTED_16 = SELECTED_16.filter(q => q.uid !== CURRENT_PICK.uid);
     } else {
         lastFeedbackMessage = "FAILED. THE SEAL IS RETIGHTENED.";
@@ -799,15 +878,25 @@ function setQuizFeedbackVisible(visible) {
 }
 
 function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer, isPaused = false) {
-    safeSetText('quiz-text', pick.question);
+    setQuizQuestionText(pick.questionPrimary, pick.questionSecondary);
     safeSetText('quiz-tag', `CHAMBER #${Math.floor(pick.uid % 10000)}`);
     const opts = document.getElementById('quiz-options');
     if (opts) {
         opts.innerHTML = '';
-        pick.options.forEach((opt, i) => {
+        pick.optionsPrimary.forEach((opt, i) => {
             const b = document.createElement('button');
             b.className = 'quiz-opt-btn w-full py-6 px-8 bg-white/5 border-2 border-[var(--lead)] rounded-2xl hover:bg-white/10 hover:border-oz-gold transition-all text-left text-sm outline-none active:scale-95 cinzel tracking-widest';
-            b.innerText = opt;
+            const label = document.createElement('span');
+            label.className = 'quiz-opt-label';
+            label.innerText = opt;
+            b.appendChild(label);
+            const secondary = pick.optionsSecondary?.[i];
+            if (secondary) {
+                const subLabel = document.createElement('span');
+                subLabel.className = 'quiz-opt-sub';
+                subLabel.innerText = secondary;
+                b.appendChild(subLabel);
+            }
             b.onclick = () => checkAnswer(i);
             b.disabled = showFeedback || isPaused;
             opts.appendChild(b);

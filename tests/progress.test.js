@@ -7,25 +7,25 @@ import {
 } from "../src/progress.js";
 
 const basePool = [
-    { question: "Q1", options: ["A", "B"], correct: 0 },
-    { question: "Q2", options: ["C", "D"], correct: 1 },
-    { question: "Q3", options: ["E", "F"], correct: 0 },
+    { qid: 1, legacyQuestion: "Q1", questionPrimary: "Q1", optionsPrimary: ["A", "B"], correct: 0 },
+    { qid: 2, legacyQuestion: "Q2", questionPrimary: "Q2", optionsPrimary: ["C", "D"], correct: 1 },
+    { qid: 3, legacyQuestion: "Q3", questionPrimary: "Q3", optionsPrimary: ["E", "F"], correct: 0 },
 ];
 
 const masterPool = [basePool[0], basePool[2]];
 
 const removed = deriveRemovedQuestions(basePool, masterPool);
-assert.deepEqual(removed, ["Q2"]);
+assert.deepEqual(removed, [2]);
 
 const pruned = applyRemovedQuestions(basePool, removed);
-assert.deepEqual(pruned.map(q => q.question), ["Q1", "Q3"]);
+assert.deepEqual(pruned.map(q => q.qid), [1, 3]);
 
 const rebuilt = rebuildSelection(basePool, [
-    { question: "Q2", soulColor: "var(--glinda)", uid: 123 },
+    { qid: 2, soulColor: "var(--glinda)", uid: 123 },
 ]);
 assert.equal(rebuilt.length, 1);
-assert.equal(rebuilt[0].question, "Q2");
-assert.equal(rebuilt[0].options[0], "C");
+assert.equal(rebuilt[0].qid, 2);
+assert.equal(rebuilt[0].optionsPrimary[0], "C");
 assert.equal(rebuilt[0].soulColor, "var(--glinda)");
 assert.equal(rebuilt[0].uid, 123);
 
