@@ -9,6 +9,7 @@ const elTeamHold = document.getElementById("teamHold");
 const elWinner = document.getElementById("winnerName");
 const teamGrid = document.getElementById("teamGrid");
 const chanState = document.getElementById("chanState");
+let orbWindow = null;
 
 chanState.textContent = "ready";
 
@@ -24,6 +25,11 @@ function logLine(s) {
 function send(type, payload = {}) {
     bc.postMessage({ type, payload, at: Date.now() });
     logLine(`→ ${type} ${JSON.stringify(payload)}`);
+}
+
+function ensureOrbWindow() {
+    if (orbWindow && !orbWindow.closed) return;
+    orbWindow = window.open("magic-orbs.html", "wss2-orbs");
 }
 
 function timings() {
@@ -113,9 +119,18 @@ document.body.addEventListener("click", (e) => {
     if (cmd === "quizPause") return send("QUIZ_PAUSE", { paused: true });
     if (cmd === "quizResume") return send("QUIZ_PAUSE", { paused: false });
 
-    if (cmd === "orbShowAll") return send("ORB_SHOW_ALL_SEQUENTIAL");
-    if (cmd === "orbShowGrid") return send("ORB_RESET");
-    if (cmd === "orbReset") return send("ORB_RESET");
+    if (cmd === "orbShowAll") {
+        ensureOrbWindow();
+        return send("ORB_SHOW_ALL_SEQUENTIAL");
+    }
+    if (cmd === "orbShowGrid") {
+        ensureOrbWindow();
+        return send("ORB_RESET");
+    }
+    if (cmd === "orbReset") {
+        ensureOrbWindow();
+        return send("ORB_RESET");
+    }
 });
 
 // Host 页键盘快捷键（更顺手）
