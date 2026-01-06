@@ -16,7 +16,7 @@
   <div class="stage">
     <div class="stage-glow" aria-hidden="true"></div>
     <div class="bg">
-      <img src="./assets/bg_full.webp" alt="" onerror="this.style.display='none'">
+      <img src="./assets/bg_full.png" alt="" onerror="this.style.display='none'">
     </div>
 
     <div class="stage-lighting" aria-hidden="true"></div>
@@ -46,7 +46,7 @@
 
         <!-- 大雾：保持静止 -->
         <div class="sprite overlaySlot" data-no-float="1"
-          style="--x:-18;--y:18;--w:95;--ar:16/9;--fit:cover;--blend:screen;--op:.55"
+          style="--x:-18;--y:18;--w:95;--ar:16/9;--fit:contain;--blend:screen;--op:.35"
           data-name="./assets/wicked/wicked_fog.png" data-missing="1">
           <img src="./assets/wicked/wicked_fog.png" alt="" onload="this.parentNode.dataset.missing='0'"
             onerror="this.parentNode.dataset.missing='1'">
@@ -77,27 +77,13 @@
         </div>
 
         <div class="sprite overlaySlot" data-float="1" data-no-rotate="1"
-          style="--x:52;--y:38;--w:38;--ar:1/1;--fit:contain;--op:.9" data-name="./assets/good/good_bubbles_2.png"
-          data-missing="1">
-          <img src="./assets/good/good_bubbles_2.png" alt="" onload="this.parentNode.dataset.missing='0'"
-            onerror="this.parentNode.dataset.missing='1'">
-        </div>
-
-        <!-- wand：同理，长宽比要更“扁” -->
-        <div class="sprite" style="--x:30;--y:30;--w:52;--ar:7/1;--fit:contain;--pad:0.10"
-          data-name="./assets/good/good_wand.png" data-missing="1">
-          <img src="./assets/good/good_wand.png" alt="" onload="this.parentNode.dataset.missing='0'"
-            onerror="this.parentNode.dataset.missing='1'">
-        </div>
-
-        <div class="sprite overlaySlot" data-float="1" data-no-rotate="1"
           style="--x:46;--y:24;--w:22;--ar:1/1;--fit:contain;--blend:screen;--op:.9"
           data-name="./assets/good/good_sparkle.png" data-missing="1">
           <img src="./assets/good/good_sparkle.png" alt="" onload="this.parentNode.dataset.missing='0'"
             onerror="this.parentNode.dataset.missing='1'">
         </div>
 
-        <div class="sprite overlaySlot" data-float="1" style="--x:60;--y:6;--w:24;--ar:1/1;--fit:contain;--op:.95"
+        <div class="sprite overlaySlot" data-float="1" style="--x:60;--y:6;--w:24;--ar:1/1;--fit:contain;--op:.70"
           data-name="./assets/good/good_crown.png" data-missing="1">
           <img src="./assets/good/good_crown.png" alt="" onload="this.parentNode.dataset.missing='0'"
             onerror="this.parentNode.dataset.missing='1'">
@@ -167,7 +153,8 @@
             <div class="ornate-panel">
               <div class="card">
                 <div class="card__title">Quest Brief</div>
-                <p class="card__text">Layered parchment, engraved borders, and cinematic shadows make data feel sacred.</p>
+                <p class="card__text">Layered parchment, engraved borders, and cinematic shadows make data feel sacred.
+                </p>
                 <div class="card__footer">
                   <span class="badge">Neutral</span>
                   <button class="btn btn--ghost" type="button" data-action="inspect">Inspect</button>
