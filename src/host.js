@@ -113,7 +113,7 @@ document.body.addEventListener("click", (e) => {
     if (cmd === "quizPause") return send("QUIZ_PAUSE", { paused: true });
     if (cmd === "quizResume") return send("QUIZ_PAUSE", { paused: false });
 
-    if (cmd === "orbShowAll") return send("ORB_SHOW_ALL_SEQUENTIAL");
+    if (cmd === "orbShowAll") return send("ORB_SHOW_ALL");
     if (cmd === "orbShowGrid") return send("ORB_RESET");
     if (cmd === "orbReset") return send("ORB_RESET");
 });
