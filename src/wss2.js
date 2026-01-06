@@ -264,7 +264,14 @@ async function loadInitialAssets() {
     }
 
     BASE_POOL = JSON.parse(JSON.stringify(MASTER_POOL));
-    UPLOADED_IMAGES = normalizeImages(images, 16);
+    UPLOADED_IMAGES = normalizeImages(images, 16).map((img) => resolveAssetUrl(img, baseUrl));
+}
+
+function resolveAssetUrl(url, baseUrl) {
+    if (!url) return url;
+    if (/^(?:https?:|data:|blob:)/.test(url)) return url;
+    if (url.startsWith("/")) return `${baseUrl}${url.slice(1)}`;
+    return `${baseUrl}${url}`;
 }
 
 function buildProgressState() {
