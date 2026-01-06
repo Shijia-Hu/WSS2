@@ -24,6 +24,7 @@ function createDOM() {
           <div class="hint">继续 <kbd>Space</kbd> / 关闭 <kbd>Esc</kbd></div>
         </div>
         <div class="body">
+          <div class="groupPhotoSlot" aria-hidden="true"></div>
           <div class="grid" data-grid></div>
         </div>
       </div>
