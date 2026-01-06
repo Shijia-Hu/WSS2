@@ -222,7 +222,13 @@ function buildProgressState() {
         soulColor: q.soulColor,
         uid: q.uid,
     }));
-    const currentPick = CURRENT_PICK ? { question: CURRENT_PICK.question, uid: CURRENT_PICK.uid } : null;
+    const currentPick = CURRENT_PICK ? {
+        question: CURRENT_PICK.question,
+        options: CURRENT_PICK.options,
+        correct: CURRENT_PICK.correct,
+        soulColor: CURRENT_PICK.soulColor,
+        uid: CURRENT_PICK.uid,
+    } : null;
     const timerState = {
         remaining: timerRemaining,
         max: timerMax,
@@ -303,6 +309,7 @@ function restoreProgress() {
     if (pendingRestoreState.currentPick) {
         CURRENT_PICK = SELECTED_16.find(q => q.uid === pendingRestoreState.currentPick.uid)
             || SELECTED_16.find(q => q.question === pendingRestoreState.currentPick.question)
+            || pendingRestoreState.currentPick
             || null;
     }
     quizFeedbackVisible = Boolean(pendingRestoreState.quizFeedbackVisible);
@@ -331,6 +338,12 @@ function restoreProgress() {
         const shouldRunTimer = Boolean(timerState?.running) && !quizFeedbackVisible;
         switchView("view-quiz", () => {
             renderQuizFromState(CURRENT_PICK, timerState, quizFeedbackVisible, shouldRunTimer);
+        });
+    } else if (targetView === "view-quiz") {
+        switchView("view-selection", () => {
+            const el = document.getElementById('selectCarousel');
+            initCarouselDOM(el, false);
+            initMouseDrag(el);
         });
     } else {
         switchView(targetView);
