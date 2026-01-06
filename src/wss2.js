@@ -396,7 +396,7 @@ function initCarouselDOM(el, isGathering = false) {
         const imgLayer = document.createElement('div');
         imgLayer.className = 'card-img-bg';
 
-        if (UPLOADED_IMAGES.length > 0) {
+        if (!isGathering && UPLOADED_IMAGES.length > 0) {
             const imgIndex = baseIndex % UPLOADED_IMAGES.length;
             imgLayer.style.backgroundImage = `url(${UPLOADED_IMAGES[imgIndex]})`;
         }
