@@ -71,5 +71,9 @@ export function createDirector() {
         });
     }
 
-    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal };
+    function hideOverlay() {
+        overlay.hide();
+    }
+
+    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal, hideOverlay };
 }

@@ -57,6 +57,8 @@ const COMMAND_HANDLERS = {
     ROUND_INTRO: (payload) => director.showRoundIntro(payload.roundId),
     SEAL: (payload) => director.showSeal(payload.roundId, payload.winner || "本轮胜队"),
     FINAL: () => director.showFinalReveal(),
+    OVERLAY_HIDE: () => director.hideOverlay(),
+    QUIZ_PAUSE: (payload) => setQuizPausedFromHost(payload?.paused === true),
 };
 
 function applyCommand(type, payload = {}) {
@@ -814,9 +816,9 @@ function setQuizPaused(paused) {
     saveProgress();
 }
 
-function togglePause() {
+function setQuizPausedFromHost(paused) {
     if (currentView !== "view-quiz" || !CURRENT_PICK) return;
-    setQuizPaused(!quizPaused);
+    setQuizPaused(paused);
 }
 
 function handleTimeout() {
@@ -954,7 +956,6 @@ window.onload = () => { initApp(); };
 const actions = {
     startRitual,
     addExtraTime,
-    togglePause,
     backToSelection,
     hideMessage,
     restoreProgress,
