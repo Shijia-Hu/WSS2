@@ -533,6 +533,19 @@
             color: rgba(255, 255, 255, 0.75);
         }
 
+        .quiz-opt-label,
+        .quiz-opt-sub {
+            display: block;
+            line-height: 1.5;
+        }
+
+        .quiz-opt-sub {
+            margin-top: 6px;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.18em;
+        }
+
         .quiz-body.is-paused {
             filter: blur(10px);
             opacity: 0.5;
