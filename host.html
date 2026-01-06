@@ -209,7 +209,7 @@
                 <div>
                     <h1>WSS2 · 主持控制台</h1>
                     <div style="color:var(--muted); font-size:13px; line-height:1.5;">
-                        大屏页打开 <b>wss2.html</b> 全屏；控制台打开 <b>host.html</b> 操作。<br />
+                        大屏页打开 <b>wss2.html</b> 全屏；魔法球规则页打开 <b>magic-orbs.html</b>；控制台打开 <b>host.html</b> 操作。<br />
                         快捷键：开始亮相 <kbd>I</kbd>（自动）/ <kbd>Shift</kbd>+<kbd>I</kbd>（手动），Next <kbd>N</kbd>，Stop
                         <kbd>X</kbd>，Act II <kbd>D</kbd>，Final <kbd>F</kbd>。<br />
                         流程快捷键：<kbd>Ctrl</kbd>/<kbd>Alt</kbd>+<kbd>1</kbd>~<kbd>6</kbd>（流程一到六），<kbd>7</kbd>~<kbd>0</kbd>（流程七到十）。
@@ -290,6 +290,30 @@
                 <button class="btn primary" data-cmd="quizResume">继续答题计时</button>
                 <div class="spacer"></div>
                 <div class="pill">适用范围：仅在答题页（CHAMBER）生效。</div>
+            </div>
+        </div>
+
+        <h2>魔法球规则 · 展示控制</h2>
+        <div class="card">
+            <div class="row">
+                <button class="btn primary" data-cmd="orbShowAll">全量规则页（赛前）</button>
+                <button class="btn" data-cmd="orbShowGrid">揭示进度页</button>
+                <button class="btn danger" data-cmd="orbReset">重置魔法球展示</button>
+                <div class="spacer"></div>
+                <div class="pill">单条规则展示会自动暂停答题，需点击“继续答题计时”恢复。</div>
+            </div>
+            <div class="grid" style="margin-top:12px;">
+                <button class="btn" data-orb-index="0">单条 · 01 时间停滞</button>
+                <button class="btn" data-orb-index="1">单条 · 02 魔咒反弹</button>
+                <button class="btn" data-orb-index="2">单条 · 03 禁言术</button>
+                <button class="btn" data-orb-index="3">单条 · 04 智慧共享</button>
+                <button class="btn" data-orb-index="4">单条 · 05 幸运骰子</button>
+                <button class="btn" data-orb-index="5">单条 · 06 魔法窃取</button>
+                <button class="btn" data-orb-index="6">单条 · 07 智慧泉水</button>
+                <button class="btn" data-orb-index="7">单条 · 08 魔法契约</button>
+                <button class="btn" data-orb-index="8">单条 · 09 镜像对决</button>
+                <button class="btn" data-orb-index="9">单条 · 10 双倍积分卡</button>
+                <button class="btn" data-orb-index="10">单条 · 11 元素召唤</button>
             </div>
         </div>
 
