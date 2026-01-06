@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>WSS2 主视觉页</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@200;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/index.css">
+  <link rel="stylesheet" href="/src/styles/main-visual.css">
+</head>
+
+<body>
+  <div class="stage">
+    <div class="stage-glow" aria-hidden="true"></div>
+    <div class="bg">
+      <img src="./assets/bg_full.webp" alt="" onerror="this.style.display='none'">
+    </div>
+
+    <div class="stage-lighting" aria-hidden="true"></div>
+    <div class="stage-fog" aria-hidden="true"></div>
+    <div class="stage-sparkles" aria-hidden="true"></div>
+    <div class="atmosphere" aria-hidden="true"></div>
+
+    <div class="layer">
+      <div class="half left">
+        <div class="sprite spinSlow" style="--x:10;--y:14;--w:40;--ar:1/1;--fit:contain;--pad:0.12"
+          data-name="./assets/wicked/wicked_gear_big.png" data-missing="1">
+          <img src="./assets/wicked/wicked_gear_big.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite spinSlowReverse" style="--x:26;--y:7;--w:24;--ar:1/1;--fit:contain;--pad:0.14;opacity:.85"
+          data-name="./assets/wicked/wicked_gear_small.png" data-missing="1">
+          <img src="./assets/wicked/wicked_gear_small.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite" style="--x:10;--y:36;--w:26;--ar:1/1;--fit:contain;--pad:0.10"
+          data-name="./assets/wicked/wicked_potion.png" data-missing="1">
+          <img src="./assets/wicked/wicked_potion.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-no-float="1"
+          style="--x:-18;--y:18;--w:95;--ar:16/9;--fit:cover;--blend:screen;--op:.55"
+          data-name="./assets/wicked/wicked_fog.png" data-missing="1">
+          <img src="./assets/wicked/wicked_fog.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite" style="--x:22;--y:76;--w:62;--ar:2/1;--fit:contain;--pad:0.04"
+          data-name="./assets/wicked/wicked_broom.png" data-missing="1">
+          <img src="./assets/wicked/wicked_broom.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-anchor="bottom" data-no-float="1"
+          style="--x:-6;--y:0;--w:96;--ar:16/9;--fit:contain;--pos:50% 100%;--op:.95"
+          data-name="./assets/wicked/wicked_emerald_city.png" data-missing="1">
+          <img src="./assets/wicked/wicked_emerald_city.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+      </div>
+
+      <div class="half right">
+        <div class="sprite overlaySlot" data-float="1" data-no-rotate="1"
+          style="--x:30;--y:10;--w:55;--ar:1/1;--fit:contain;--op:.95" data-name="./assets/good/good_bubbles_1.png"
+          data-missing="1">
+          <img src="./assets/good/good_bubbles_1.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-float="1" data-no-rotate="1"
+          style="--x:52;--y:38;--w:38;--ar:1/1;--fit:contain;--op:.9" data-name="./assets/good/good_bubbles_2.png"
+          data-missing="1">
+          <img src="./assets/good/good_bubbles_2.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite" style="--x:30;--y:30;--w:52;--ar:7/1;--fit:contain;--pad:0.10"
+          data-name="./assets/good/good_wand.png" data-missing="1">
+          <img src="./assets/good/good_wand.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-float="1" data-no-rotate="1"
+          style="--x:46;--y:24;--w:22;--ar:1/1;--fit:contain;--blend:screen;--op:.9"
+          data-name="./assets/good/good_sparkle.png" data-missing="1">
+          <img src="./assets/good/good_sparkle.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-float="1" style="--x:60;--y:6;--w:24;--ar:1/1;--fit:contain;--op:.95"
+          data-name="./assets/good/good_crown.png" data-missing="1">
+          <img src="./assets/good/good_crown.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-no-float="1"
+          style="--x:-18;--y:18;--w:108;--ar:16/9;--fit:cover;--blend:screen;--op:.45"
+          data-name="./assets/good/good_glow.png" data-missing="1">
+          <img src="./assets/good/good_glow.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+
+        <div class="sprite overlaySlot" data-anchor="bottom" data-no-float="1"
+          style="--x:24;--y:2;--w:92;--ar:16/10;--fit:contain;--pos:50% 100%;--op:.95"
+          data-name="./assets/good/good_castle.png" data-missing="1">
+          <img src="./assets/good/good_castle.png" alt="" onload="this.parentNode.dataset.missing='0'"
+            onerror="this.parentNode.dataset.missing='1'">
+        </div>
+      </div>
+    </div>
+
+    <div class="main-visual__content">
+      <div>
+        <div class="main-visual__kicker">Wicked × Good</div>
+        <h1 class="main-visual__title">Who’s Still Standing?</h1>
+        <div class="main-visual__subtitle">主持人串词主视觉</div>
+        <div class="main-visual__divider"></div>
+        <div class="main-visual__hint">Host Overlay Ready</div>
+      </div>
+    </div>
+
+    <div class="frameLayer">
+      <img src="./assets/frame/frame_full.png" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="overlayLayer">
+      <img src="./assets/overlays/overlay_glitter.png" alt="" onerror="this.style.display='none'">
+    </div>
+  </div>
+
+  <script type="module" src="/src/main-visual.js"></script>
+</body>
+
+</html>
