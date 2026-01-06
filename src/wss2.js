@@ -620,6 +620,27 @@ function handleGather(color) {
     saveProgress();
 }
 
+function splitQuestionText(question) {
+    if (!question) return { primary: "", secondary: "" };
+    const trimmed = question.trim();
+    const match = trimmed.match(/^(.*?)[（(]([^()（）]+)[)）]\s*$/);
+    if (match) {
+        return { primary: match[1].trim(), secondary: match[2].trim() };
+    }
+    return { primary: trimmed, secondary: "" };
+}
+
+function setQuizQuestionText(question) {
+    const { primary, secondary } = splitQuestionText(question);
+    const primaryEl = document.getElementById('quiz-text-primary');
+    const secondaryEl = document.getElementById('quiz-text-secondary');
+    if (primaryEl) primaryEl.innerText = primary;
+    if (secondaryEl) {
+        secondaryEl.innerText = secondary;
+        secondaryEl.style.display = secondary ? '' : 'none';
+    }
+}
+
 function startShuffle() {
     const deck = document.getElementById('shuffle-deck');
     if (!deck) return;
@@ -636,7 +657,7 @@ function startShuffle() {
 
 function startQuiz() {
     if (!CURRENT_PICK) return;
-    safeSetText('quiz-text', CURRENT_PICK.question);
+    setQuizQuestionText(CURRENT_PICK.question);
     safeSetText('quiz-tag', `CHAMBER #${Math.floor(CURRENT_PICK.uid % 10000)}`);
     const opts = document.getElementById('quiz-options');
     if (opts) {
@@ -799,7 +820,7 @@ function setQuizFeedbackVisible(visible) {
 }
 
 function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer, isPaused = false) {
-    safeSetText('quiz-text', pick.question);
+    setQuizQuestionText(pick.question);
     safeSetText('quiz-tag', `CHAMBER #${Math.floor(pick.uid % 10000)}`);
     const opts = document.getElementById('quiz-options');
     if (opts) {
