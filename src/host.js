@@ -109,6 +109,8 @@ document.body.addEventListener("click", (e) => {
     if (cmd === "act2") return send("ACT_INTRO", { actId: "act2" });
     if (cmd === "final") return send("FINAL");
     if (cmd === "actExit") return send("OVERLAY_HIDE");
+    if (cmd === "mainVisualShow") return send("MAIN_VISUAL_SHOW");
+    if (cmd === "mainVisualHide") return send("MAIN_VISUAL_HIDE");
 
     if (cmd === "quizPause") return send("QUIZ_PAUSE", { paused: true });
     if (cmd === "quizResume") return send("QUIZ_PAUSE", { paused: false });
