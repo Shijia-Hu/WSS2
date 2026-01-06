@@ -209,7 +209,7 @@
                 <div>
                     <h1>WSS2 · 主持控制台</h1>
                     <div style="color:var(--muted); font-size:13px; line-height:1.5;">
-                        大屏页打开 <b>wss2.html</b> 全屏；主视觉页打开 <b>main-visual.html</b>（串词展示）；控制台打开 <b>host.html</b> 操作。<br />
+                        大屏页打开 <b>wss2.html</b> 全屏；主视觉以 overlay 方式展示（主屏无需单独开 <b>main-visual.html</b>）；控制台打开 <b>host.html</b> 操作。<br />
                         快捷键：开始亮相 <kbd>I</kbd>（自动）/ <kbd>Shift</kbd>+<kbd>I</kbd>（手动），Next <kbd>N</kbd>，Stop
                         <kbd>X</kbd>，Act II <kbd>D</kbd>，Final <kbd>F</kbd>。<br />
                         流程快捷键：<kbd>Ctrl</kbd>/<kbd>Alt</kbd>+<kbd>1</kbd>~<kbd>6</kbd>（流程一到六），<kbd>7</kbd>~<kbd>0</kbd>（流程七到十）。
@@ -253,6 +253,14 @@
                 单独重放某队（补救用）：点击队伍按钮即可在大屏重放该队亮相（同样支持自动/手动速度）。
             </div>
             <div class="grid" id="teamGrid"></div>
+        </div>
+
+        <h2>主视觉 Overlay</h2>
+        <div class="card">
+            <div class="row">
+                <button class="btn primary" data-cmd="mainVisualShow">显示主视觉</button>
+                <button class="btn danger" data-cmd="mainVisualHide">关闭主视觉</button>
+            </div>
         </div>
 
         <h2>Act I / II / III · 叙事控制</h2>
