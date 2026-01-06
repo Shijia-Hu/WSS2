@@ -1,5 +1,4 @@
 import { TEAMS } from "./data/teams.js";
-import { ORBS } from "./data/orbs.js";
 import { createTeamIntro } from "./story/teamIntro.js";
 import { createDirector } from "./story/director.js";
 import {
@@ -11,10 +10,6 @@ import {
 
 const director = createDirector();
 const teamIntro = createTeamIntro();
-const orbRuleBlocks = ORBS.map((orb, index) => ({
-    title: `${String(index + 1).padStart(2, "0")}. ${orb.title}`,
-    desc: orb.desc
-}));
 
 (() => {
     const wasPortal = sessionStorage.getItem("portal-entered");
@@ -64,23 +59,6 @@ const COMMAND_HANDLERS = {
     FINAL: () => director.showFinalReveal(),
     OVERLAY_HIDE: () => director.hideOverlay(),
     QUIZ_PAUSE: (payload) => setQuizPausedFromHost(payload?.paused === true),
-    ORB_SHOW_ALL: () => director.showOverlay({
-        title: "魔法球规则",
-        subtitle: "Magic Orbs",
-        blocks: orbRuleBlocks,
-        meta: "Orb Rules"
-    }),
-    ORB_SHOW_SINGLE: (payload) => {
-        const index = Number(payload?.index);
-        if (!Number.isInteger(index) || !ORBS[index]) return;
-        director.showOverlay({
-            title: ORBS[index].title,
-            subtitle: "魔法球规则",
-            blocks: [{ title: ORBS[index].title, desc: ORBS[index].desc }],
-            meta: `Orb · ${String(index + 1).padStart(2, "0")}`
-        });
-    },
-    ORB_RESET: () => director.hideOverlay(),
 };
 
 function applyCommand(type, payload = {}) {

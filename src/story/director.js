@@ -75,9 +75,5 @@ export function createDirector() {
         overlay.hide();
     }
 
-    function showOverlay(payload) {
-        overlay.show(payload);
-    }
-
-    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal, hideOverlay, showOverlay };
+    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal, hideOverlay };
 }

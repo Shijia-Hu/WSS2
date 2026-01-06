@@ -60,29 +60,6 @@ function cssText() {
     font-size: 18px; line-height: 1.55;
   }
   #stageOverlay .body p { margin: 0 0 10px; }
-  #stageOverlay .rule-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-  }
-  #stageOverlay .rule-card {
-    border-radius: 16px;
-    padding: 12px 14px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.16);
-    box-shadow: inset 0 0 18px rgba(255,255,255,.04);
-  }
-  #stageOverlay .rule-card h3 {
-    margin: 0 0 6px;
-    font-size: 16px;
-    letter-spacing: .4px;
-    color: #fff;
-  }
-  #stageOverlay .rule-card p {
-    margin: 0;
-    font-size: 14px;
-    color: rgba(255,255,255,.8);
-  }
 
   #stageOverlay .footer {
     margin-top: 18px;
@@ -138,26 +115,13 @@ export function createOverlay() {
     });
 
     function show(payload) {
-        const { title, subtitle, lines = [], blocks = null, meta = "", emblemUrl = "" } = payload || {};
+        const { title, subtitle, lines = [], meta = "", emblemUrl = "" } = payload || {};
         root.querySelector("[data-title]").textContent = title || "";
         root.querySelector("[data-subtitle]").textContent = subtitle || "";
         root.querySelector("[data-meta]").textContent = meta || "";
 
         const body = root.querySelector("[data-body]");
-        if (Array.isArray(blocks)) {
-            body.innerHTML = `
-                <div class="rule-grid">
-                    ${blocks.map(block => `
-                        <div class="rule-card">
-                            <h3>${escapeHtml(block.title || "")}</h3>
-                            <p>${escapeHtml(block.desc || "")}</p>
-                        </div>
-                    `).join("")}
-                </div>
-            `;
-        } else {
-            body.innerHTML = lines.map(t => `<p>${escapeHtml(t)}</p>`).join("");
-        }
+        body.innerHTML = lines.map(t => `<p>${escapeHtml(t)}</p>`).join("");
 
         const emblemBox = root.querySelector("[data-emblem]");
         emblemBox.innerHTML = emblemUrl ? `<img alt="" src="${emblemUrl}">` : "";
