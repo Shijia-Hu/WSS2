@@ -159,6 +159,21 @@ let lastFeedbackColor = "";
 let lastGatherColor = null;
 const STORAGE_KEY = "wss2-progress";
 let pendingRestoreState = null;
+const pendingTimeouts = new Set();
+
+function scheduleTimeout(fn, delay) {
+    const id = setTimeout(() => {
+        pendingTimeouts.delete(id);
+        fn();
+    }, delay);
+    pendingTimeouts.add(id);
+    return id;
+}
+
+function clearScheduledTimeouts() {
+    pendingTimeouts.forEach((id) => clearTimeout(id));
+    pendingTimeouts.clear();
+}
 
 function splitQuestionText(question) {
     if (!question) return { primary: "", secondary: "" };
@@ -426,13 +441,23 @@ function restartProgress() {
     clearProgress();
     pendingRestoreState = null;
     hideRestorePrompt();
-    initApp().then(() => startRitual());
+    clearScheduledTimeouts();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = null;
+    timerRunning = false;
+    quizPaused = false;
+    quizFeedbackVisible = false;
+    CURRENT_PICK = null;
+    SELECTED_16 = [];
+    gatheredCount = 0;
+    lastGatherColor = null;
+    initApp().then(() => switchView("view-intro"));
 }
 
 function switchView(id, callback) {
     const cur = document.querySelector('.view-container.active');
     if (cur) cur.classList.add('blur');
-    setTimeout(() => {
+    scheduleTimeout(() => {
         document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active', 'blur'));
         const target = document.getElementById(id);
         if (target) target.classList.add('active');
@@ -638,7 +663,7 @@ function startRitual() {
         }));
         gatheredCount = 16;
         updateGatherUI();
-        setTimeout(() => switchView('view-shuffling', startShuffle), 200);
+        scheduleTimeout(() => switchView('view-shuffling', startShuffle), 200);
         saveProgress();
         return;
     }
@@ -683,7 +708,7 @@ function handleGather(color) {
     q.soulColor = color;
     q.uid = Date.now() + Math.random();
     SELECTED_16.push(q);
-    if (gatheredCount === 16) setTimeout(() => switchView('view-shuffling', startShuffle), 400);
+    if (gatheredCount === 16) scheduleTimeout(() => switchView('view-shuffling', startShuffle), 400);
     saveProgress();
 }
 
@@ -708,7 +733,12 @@ function startShuffle() {
         c.style.transform = `translate(${(Math.random() - 0.5) * 200}px, ${(Math.random() - 0.5) * 150}px) rotate(${(Math.random() - 0.5) * 80}deg) scale(0.7)`;
         deck.appendChild(c);
     }
-    setTimeout(() => { const el = document.getElementById('selectCarousel'); initCarouselDOM(el, false); initMouseDrag(el); switchView('view-selection'); }, 3000);
+    scheduleTimeout(() => {
+        const el = document.getElementById('selectCarousel');
+        initCarouselDOM(el, false);
+        initMouseDrag(el);
+        switchView('view-selection');
+    }, 3000);
 }
 
 function startQuiz() {
