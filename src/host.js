@@ -58,6 +58,15 @@ document.body.addEventListener("click", (e) => {
     const btn = e.target.closest("button");
     if (!btn) return;
 
+    const orbIndex = btn.dataset.orbIndex;
+    if (orbIndex !== undefined) {
+        const index = Number(orbIndex);
+        if (Number.isInteger(index)) {
+            send("ORB_SHOW_SINGLE", { index });
+            return send("QUIZ_PAUSE", { paused: true });
+        }
+    }
+
     // 单队重放
     const teamId = btn.dataset.team;
     if (teamId) {
@@ -103,6 +112,10 @@ document.body.addEventListener("click", (e) => {
 
     if (cmd === "quizPause") return send("QUIZ_PAUSE", { paused: true });
     if (cmd === "quizResume") return send("QUIZ_PAUSE", { paused: false });
+
+    if (cmd === "orbShowAll") return send("ORB_SHOW_ALL_SEQUENTIAL");
+    if (cmd === "orbShowGrid") return send("ORB_RESET");
+    if (cmd === "orbReset") return send("ORB_RESET");
 });
 
 // Host 页键盘快捷键（更顺手）
@@ -140,4 +153,6 @@ window.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.altKey) && e.key === "4") return send("PROCESS", { processId: "p4" });
     if ((e.ctrlKey || e.altKey) && e.key === "5") return send("PROCESS", { processId: "p5" });
     if ((e.ctrlKey || e.altKey) && e.key === "6") return send("PROCESS", { processId: "p6" });
+
+    if (k === "m" && e.shiftKey) return send("ORB_RESET");
 });
