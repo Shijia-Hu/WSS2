@@ -99,6 +99,10 @@ document.body.addEventListener("click", (e) => {
 
     if (cmd === "act2") return send("ACT_INTRO", { actId: "act2" });
     if (cmd === "final") return send("FINAL");
+    if (cmd === "actExit") return send("OVERLAY_HIDE");
+
+    if (cmd === "quizPause") return send("QUIZ_PAUSE", { paused: true });
+    if (cmd === "quizResume") return send("QUIZ_PAUSE", { paused: false });
 });
 
 // Host 页键盘快捷键（更顺手）
