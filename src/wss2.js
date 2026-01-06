@@ -426,7 +426,7 @@ function restartProgress() {
     clearProgress();
     pendingRestoreState = null;
     hideRestorePrompt();
-    initApp().then(() => startRitual());
+    initApp().then(() => switchView("view-intro"));
 }
 
 function switchView(id, callback) {
