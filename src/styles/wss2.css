@@ -425,6 +425,11 @@
 
         #view-quiz .glass-panel {
             max-width: 720px;
+            max-height: calc(100vh - 64px);
+            max-height: calc(100dvh - 64px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .glass-panel::before {
@@ -510,6 +515,9 @@
 
         .quiz-body {
             transition: filter 0.35s ease, opacity 0.35s ease;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
         }
 
         .quiz-question-stack {
@@ -527,6 +535,10 @@
             border: 1px solid rgba(197, 160, 89, 0.35);
             background: rgba(0, 0, 0, 0.35);
             box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
+        }
+
+        #view-quiz .quiz-question {
+            font-size: clamp(1.1rem, 1rem + 0.6vw, 1.5rem);
         }
 
         .quiz-question-secondary {
