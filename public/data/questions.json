@@ -1,82 +1,1012 @@
 [
   {
-    "question": "谁唱响了《Defying Gravity》？",
-    "options": ["格琳达", "埃尔法巴", "费耶罗", "男巫"],
-    "correct": 1
+    "question": "Pop Culture - Which animated movie features a panda who becomes the Dragon Warrior? (1 流行文化 - 哪部动画电影讲述了一只熊猫成为龙战士的故事？)",
+    "options": [
+      "Kung Fu Panda (功夫熊猫)",
+      "Mulan (花木兰)",
+      "Bolt (闪电狗)",
+      "The Croods (疯狂原始人)"
+    ],
+    "correct": 0
   },
   {
-    "question": "格琳达最初在希兹大学的名字？",
-    "options": ["格琳达", "格琳迪瓦", "嘉琳达", "格洛丽亚"],
+    "question": "Pop Culture - Katniss Everdeen is the main character in which series? (2 流行文化 - 凯特尼斯·伊夫狄恩是哪部系列作品的主角？)",
+    "options": [
+      "Divergent (分歧者)",
+      "The Maze Runner (移动迷宫)",
+      "The Hunger Games (饥饿游戏)",
+      "Percy Jackson (波西·杰克逊)"
+    ],
     "correct": 2
   },
   {
-    "question": "埃尔法巴的肤色是什么颜色的？",
-    "options": ["粉色", "绿色", "蓝色", "金色"],
+    "question": "Pop Culture - Which movie features the quote “I am inevitable”? (3 流行文化 - 哪部电影中有“我是不可避免的”这句台词？)",
+    "options": [
+      "Avatar (阿凡达)",
+      "Avengers: Endgame (复仇者联盟：终局之战)",
+      "Inception (盗梦空间)",
+      "Joker (小丑)"
+    ],
     "correct": 1
   },
   {
-    "question": "费耶罗在剧中变成了什么？",
-    "options": ["狮子", "稻草人", "铁皮人", "飞猴"],
-    "correct": 1
-  },
-  {
-    "question": "《Popular》是谁唱的？",
-    "options": ["埃尔法巴", "格琳达", "费耶罗", "男巫"],
-    "correct": 1
-  },
-  {
-    "question": "奥兹国的首都叫什么名字？",
-    "options": ["翡翠城", "希兹", "芒奇金", "彩虹镇"],
+    "question": "Pop Culture - Which Disney film about a Colombian family includes the song “We Don’t Talk About Bruno”? (4 流行文化 - 哪部迪士尼电影讲述了哥伦比亚家庭的故事，并包含歌曲《我们不谈论布鲁诺》？)",
+    "options": [
+      "Encanto (魔法满屋)",
+      "Coco (寻梦环游记)",
+      "Raya and the Last Dragon (寻龙传说)",
+      "Luca (夏日友情天)"
+    ],
     "correct": 0
   },
   {
-    "question": "格琳达是代表哪个方向的女巫？",
-    "options": ["西方", "东方", "北方", "南方"],
+    "question": "Pop Culture - Which popular sandbox game is known for blocks and Creepers? (5 流行文化 - 哪款流行的沙盒游戏以方块和爬行者为特色？)",
+    "options": [
+      "Roblox (罗布乐思)",
+      "Minecraft (我的世界)",
+      "Genshin Impact (原神)",
+      "League of Legends (英雄联盟)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Pop Culture - Which singer is famous for “Bad Guy”? (6 流行文化 - 哪位歌手因歌曲《Bad Guy》而出名？)",
+    "options": [
+      "Dua Lipa (杜阿·利帕)",
+      "Billie Eilish (比莉·艾利什)",
+      "Olivia Rodrigo (奥利维亚·罗德里戈)",
+      "Doja Cat (豆荚猫)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Pop Culture - Which franchise does the character Pikachu belong to? (7 流行文化 - 角色皮卡丘属于哪个系列？)",
+    "options": [
+      "Digimon (数码宝贝)",
+      "Pokémon (精灵宝可梦)",
+      "Yu-Gi-Oh! (游戏王)",
+      "Bakugan (爆丸)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Pop Culture - Which TV series follows teenagers in the Upside Down? (8 流行文化 - 哪部电视剧讲述了青少年在“颠倒世界”的故事？)",
+    "options": [
+      "The Boys (黑袍纠察队)",
+      "Stranger Things (怪奇物语)",
+      "Riverdale (河谷镇)",
+      "Wednesday (星期三)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Pop Culture - Which social media platform is best known for image posts and Stories? (9 流行文化 - 哪个社交媒体平台以图片帖子和故事功能最为知名？)",
+    "options": [
+      "Snapchat",
+      "Instagram",
+      "Twitter/X",
+      "Reddit"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Pop Culture - Which film series features a boy who can talk to animals and lives in Hogwarts-like school for magic creatures? (10 流行文化 - 哪部电影系列讲述了一个能与动物对话、住在类似霍格沃茨的魔法生物学校的男孩？)",
+    "options": [
+      "None of these (以上都不是)",
+      "Fantastic Beasts (神奇动物在哪里)",
+      "The Chronicles of Narnia (纳尼亚传奇)",
+      "Shrek (怪物史莱克)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Pop Culture - Which girl group’s fandom is called “ONCE”? (11 流行文化 - 哪个女子组合的粉丝群体被称为“ONCE”？)",
+    "options": [
+      "TWICE ( twice)",
+      "BLACKPINK (粉墨)",
+      "ITZY (一击)",
+      "aespa ( aespa)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Pop Culture - Which Marvel hero says “I can do this all day”? (12 流行文化 - 哪个漫威英雄说过“我可以一整天都这样做”？)",
+    "options": [
+      "Thor (雷神)",
+      "Iron Man (钢铁侠)",
+      "Captain America (美国队长)",
+      "Hawkeye (鹰眼)"
+    ],
     "correct": 2
   },
   {
-    "question": "男巫是通过什么来到奥兹国的？",
-    "options": ["热气球", "飓风", "银鞋子", "魔法门"],
+    "question": "Pop Culture - Which sci-fi series popularized the phrase “This is the Way”? (13 流行文化 - 哪个科幻系列剧让“这就是路”这句话流行起来？)",
+    "options": [
+      "The Mandalorian (曼达洛人)",
+      "Stranger Things (怪奇物语)",
+      "Andor (安多)",
+      "Halo (光环)"
+    ],
     "correct": 0
   },
   {
-    "question": "迪拉蒙教授是什么物种？",
-    "options": ["山羊", "猴子", "狮子", "人类"],
-    "correct": 0
+    "question": "Pop Culture - Which 2020s trend often mixes studying with cozy aesthetics and productivity videos? (14 流行文化 - 2020年代哪个趋势常将学习与舒适美学和 productivity 视频结合？)",
+    "options": [
+      "Dark academia (暗黑学术风)",
+      "Cottagecore ( cottagecore)",
+      "StudyTube / Study-vlog (学习油管/学习博客)",
+      "Goblincore (哥布林风)"
+    ],
+    "correct": 2
   },
   {
-    "question": "埃尔法巴的妹妹叫什么？",
-    "options": ["内莎罗丝", "格琳达", "莫里布尔", "多萝西"],
-    "correct": 0
+    "question": "British Culture - What is the Union Jack? (15 英国文化 - 什么是Union Jack？)",
+    "options": [
+      "A national dish (一道国菜)",
+      "The UK Parliament (英国议会)",
+      "The British flag (英国国旗)",
+      "A football trophy (一个足球奖杯)"
+    ],
+    "correct": 2
   },
   {
-    "question": "费耶罗最初是谁的未婚夫？",
-    "options": ["格琳达", "埃尔法巴", "内莎", "莫里布尔"],
-    "correct": 0
+    "question": "British Culture - Traditional afternoon tea usually includes tea, cakes and what? (16 英国文化 - 传统下午茶通常包括茶、蛋糕和什么？)",
+    "options": [
+      "Pasta (意大利面)",
+      "Dumplings (饺子)",
+      "Sandwiches (三明治)",
+      "Tacos (墨西哥卷饼)"
+    ],
+    "correct": 2
   },
   {
-    "question": "博克最后变成了什么？",
-    "options": ["铁皮人", "稻草人", "狮子", "飞猴"],
-    "correct": 0
-  },
-  {
-    "question": "格琳达最初想选修哪门课？",
-    "options": ["咒语课", "炼金术", "魔法史", "占星术"],
-    "correct": 0
-  },
-  {
-    "question": "埃尔法巴的扫帚是从哪来的？",
-    "options": ["自带", "男巫那偷的", "莫里布尔送的", "捡到的"],
+    "question": "British Culture - Which British TV show features a time-travelling alien known as “The Doctor”? (17 英国文化 - 哪个英国电视节目讲述了一个被称为“博士”的时间旅行外星人？)",
+    "options": [
+      "Sherlock (神探夏洛克)",
+      "Doctor Who (神秘博士)",
+      "Downton Abbey (唐顿庄园)",
+      "The Crown (王冠)"
+    ],
     "correct": 1
   },
   {
-    "question": "剧中最后格琳达对奥兹国说埃尔法巴？",
-    "options": ["死了", "隐居了", "去冒险了", "逃跑了"],
+    "question": "British Culture - In the UK school system, what does “GCSE” stand for the “G” part? (18 英国文化 - 在英国教育体系中，“GCSE”的“G”代表什么？)",
+    "options": [
+      "Global (全球)",
+      "General (普通)",
+      "Greater (更大)",
+      "Graded (分级)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "British Culture - Which British writer created Sherlock Holmes? (19 英国文化 - 哪位英国作家创造了夏洛克·福尔摩斯？)",
+    "options": [
+      "Arthur Conan Doyle (阿瑟·柯南·道尔)",
+      "Agatha Christie (阿加莎·克里斯蒂)",
+      "Ian Fleming (伊恩·弗莱明)",
+      "H. G. Wells (赫伯特·乔治·威尔斯)"
+    ],
     "correct": 0
   },
   {
-    "question": "《For Good》关于什么？",
-    "options": ["友谊", "复仇", "爱情", "权力"],
+    "question": "British Culture - What is a typical British Sunday meal with roast meat and vegetables called? (20 英国文化 - 英国典型的周日烤肉配蔬菜餐点叫什么？)",
+    "options": [
+      "Sunday special (周日特餐)",
+      "Sunday roast (周日烤肉)",
+      "Bank-holiday brunch (银行假日早午餐)",
+      "Full English (全英式早餐)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "British Culture - Which British city is famous for The Beatles? (21 英国文化 - 哪个英国城市因披头士乐队闻名？)",
+    "options": [
+      "Liverpool (利物浦)",
+      "Bristol (布里斯托尔)",
+      "Leeds (利兹)",
+      "York (约克)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "British Culture - Which British university is older? (22 英国文化 - 哪所英国大学更古老？)",
+    "options": [
+      "Oxford (牛津)",
+      "Cambridge (剑桥)",
+      "They are the same age (年龄相同)",
+      "Neither is British (都不是英国的)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Chinese Culture - The concept of “yin and yang” describes: (23 中国文化 - “阴阳”概念描述的是：)",
+    "options": [
+      "Weather types (天气类型)",
+      "Opposing but complementary forces (对立但互补的力量)",
+      "Animal species (动物种类)",
+      "Calendar months (月份)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Chinese History - Which Chinese invention led to navigation and the modern GPS era? (24 中国历史 - 哪项中国发明引领了导航和现代GPS时代？)",
+    "options": [
+      "Paper (纸)",
+      "Gunpowder (火药)",
+      "Compass (指南针)",
+      "Printing (印刷术)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Chinese Traditions - Which festival is sometimes called “Chinese Valentine’s Day”? (25 中国传统 - 哪个节日有时被称为“中国情人节”？)",
+    "options": [
+      "Qixi Festival (七夕节)",
+      "Qingming Festival (清明节)",
+      "Double Ninth Festival (重阳节)",
+      "Winter Solstice (冬至)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Chinese Culture - What is a common greeting said at Chinese New Year? (26 中国文化 - 中国新年常用的问候语是什么？)",
+    "options": [
+      "Nǐ hǎo (你好)",
+      "Zàijiàn (再见)",
+      "Xīnnián kuàilè (新年快乐)",
+      "Qǐng jìn (请进)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Chinese History - The Silk Road was primarily used for trading what kind of goods at the beginning? (27 中国历史 - 丝绸之路最初主要用于交易哪种商品？)",
+    "options": [
+      "Electronics (电子设备)",
+      "Spices only (仅香料)",
+      "Silk and other luxury goods (丝绸和其他奢侈品)",
+      "Oil (石油)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Chinese Culture - Which drink has a long tradition in China and is often used in ceremonies? (28 中国文化 - 哪种饮品在中国有悠久传统且常被用于仪式？)",
+    "options": [
+      "Coffee (咖啡)",
+      "Tea (茶)",
+      "Juice (果汁)",
+      "Cola (可乐)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Chinese History - Who is the legendary first emperor who unified China? (29 中国历史 - 谁是统一中国的传奇第一位皇帝？)",
+    "options": [
+      "Sun Yat-sen (孙中山)",
+      "Qin Shi Huang (秦始皇)",
+      "Liu Bang (刘邦)",
+      "Kangxi (康熙)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Chinese Traditions - What food is commonly eaten at family reunion dinners to symbolize wealth? (30 中国传统 - 家庭团圆饭中常吃什么食物象征财富？)",
+    "options": [
+      "Dumplings (jiǎozi) (饺子)",
+      "Hamburgers (汉堡)",
+      "Hotpot only (仅火锅)",
+      "Sushi (寿司)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which part of the eye controls how much light enters? (31 科学 - 眼睛的哪个部分控制进入的光量？)",
+    "options": [
+      "Retina (视网膜)",
+      "Lens (晶状体)",
+      "Iris (虹膜)",
+      "Optic nerve (视神经)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Science - What is the basic unit of life? (32 科学 - 生命的基本单位是什么？)",
+    "options": [
+      "Atom (原子)",
+      "Cell (细胞)",
+      "Tissue (组织)",
+      "Organ (器官)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Science - What kind of energy does a moving object have? (33 科学 - 运动物体具有哪种能量？)",
+    "options": [
+      "Chemical (化学能)",
+      "Thermal (热能)",
+      "Kinetic (动能)",
+      "Potential (势能)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Science - Which scientist proposed the three laws of motion? (34 科学 - 哪位科学家提出了运动三定律？)",
+    "options": [
+      "Albert Einstein (爱因斯坦)",
+      "Isaac Newton (牛顿)",
+      "Galileo Galilei (伽利略)",
+      "Marie Curie (居里夫人)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Science - What is the main gas in Earth’s atmosphere? (35 科学 - 地球大气的主要气体是什么？)",
+    "options": [
+      "Oxygen (氧气)",
+      "Nitrogen (氮气)",
+      "Carbon dioxide (二氧化碳)",
+      "Hydrogen (氢气)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Science - What is the process of a solid changing directly to gas called? (36 科学 - 固体直接变为气体的过程叫什么？)",
+    "options": [
+      "Melting (熔化)",
+      "Condensation (凝结)",
+      "Sublimation (升华)",
+      "Freezing (凝固)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Science - Which vitamin is mainly obtained from sunlight exposure on the skin? (38 科学 - 哪种维生素主要通过皮肤暴露在阳光下获得？)",
+    "options": [
+      "Vitamin A (维生素A)",
+      "Vitamin B12 (维生素B12)",
+      "Vitamin C (维生素C)",
+      "Vitamin D (维生素D)"
+    ],
+    "correct": 3
+  },
+  {
+    "question": "Math - If a line has slope 2 and passes through (0, 1), its equation is? (39 数学 - 如果一条直线斜率为2且经过点(0,1)，它的方程是？)",
+    "options": [
+      "y = 2x + 1 (y=2x+1)",
+      "y = x + 2 (y=x+2)",
+      "y = 2x − 1 (y=2x-1)",
+      "y = x − 2 (y=x-2)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is 10% of 250? (40 数学 - 250的10%是多少？)",
+    "options": [
+      "20 (20)",
+      "25 (25)",
+      "30 (30)",
+      "35 (35)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Math - Simplify: 2/3 + 1/6 =? (41 数学 - 化简:2/3 +1/6 =？)",
+    "options": [
+      "1/2 (二分之一)",
+      "3/4 (四分之三)",
+      "5/6 (六分之五)",
+      "1 (1)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Art & Music - In music, what symbol indicates the piece should be played loudly? (42 艺术与音乐 - 在音乐中，哪个符号表示乐曲应大声演奏？)",
+    "options": [
+      "p (弱)",
+      "f (强)",
+      "m (中)",
+      "s (其他)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Art & Music - Primary colors of pigment (in traditional art class) are? (43 艺术与音乐 - 颜料的三原色（传统美术课中）是？)",
+    "options": [
+      "Red, green, blue (红、绿、蓝)",
+      "Red, blue, yellow (红、蓝、黄)",
+      "Blue, yellow, green (蓝、黄、绿)",
+      "Cyan, magenta, yellow (青、品红、黄)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Art & Music - Which period of art is Salvador Dalí associated with? (44 艺术与音乐 - 萨尔瓦多·达利与哪个艺术时期相关？)",
+    "options": [
+      "Surrealism (超现实主义)",
+      "Impressionism (印象派)",
+      "Cubism (立体主义)",
+      "Baroque (巴洛克)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Art & Music - Which composer became famously deaf later in life? (45 艺术与音乐 - 哪位作曲家晚年失聪变得著名？)",
+    "options": [
+      "Chopin (肖邦)",
+      "Beethoven (贝多芬)",
+      "Liszt (李斯特)",
+      "Handel (亨德尔)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Art & Music - “K-pop” mainly refers to pop music from which country? (46 艺术与音乐 - “K-pop”主要指哪个国家的流行音乐？)",
+    "options": [
+      "Japan (日本)",
+      "South Korea (韩国)",
+      "China (中国)",
+      "Thailand (泰国)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Art & Music - A group of singers performing together is called a? (47 艺术与音乐 - 一群歌手一起表演被称为什么？)",
+    "options": [
+      "Band (乐队)",
+      "Orchestra (管弦乐队)",
+      "Choir (合唱团)",
+      "Quartet (四重奏)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "English & Lit - In a play, the list of characters is called the? (48 英语与文学 - 戏剧中角色列表被称为什么？)",
+    "options": [
+      "Cast (演员表)",
+      "Chorus (合唱队)",
+      "Company (剧团)",
+      "Credits (片尾字幕)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "English & Lit - Which author wrote Pride and Prejudice? (49 英语与文学 - 哪位作者写了《傲慢与偏见》？)",
+    "options": [
+      "Jane Austen (简·奥斯汀)",
+      "Emily Brontë (艾米莉·勃朗特)",
+      "Charlotte Brontë (夏洛蒂·勃朗特)",
+      "George Eliot (乔治·艾略特)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "English & Lit - “The leaves danced in the wind” is an example of? (50 英语与文学 - “树叶在风中跳舞”是哪种修辞手法的例子？)",
+    "options": [
+      "Simile (明喻)",
+      "Personification (拟人)",
+      "Metaphor (暗喻)",
+      "Oxymoron (矛盾修辞法)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "English & Lit - Which of these is an example of alliteration? (51 英语与文学 - 以下哪个是头韵的例子？)",
+    "options": [
+      "Dark and deep (黑暗深邃)",
+      "Peter Piper picked (彼得·派珀摘了)",
+      "Run like the wind (跑得像风)",
+      "Quiet as a mouse (静如鼠)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "English & Lit - The time and place of a story is called its? (52 英语与文学 - 故事的时间和地点被称为什么？)",
+    "options": [
+      "Plot (情节)",
+      "Theme (主题)",
+      "Setting (背景)",
+      "Conflict (冲突)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "English & Lit - The struggle between opposing forces in a story is called? (53 英语与文学 - 故事中对立力量之间的斗争被称为？)",
+    "options": [
+      "Climax (高潮)",
+      "Conflict (冲突)",
+      "Resolution (结局)",
+      "Exposition (说明)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Trends & Tech - What does “www” stand for in web addresses? (54 趋势与科技 - 网址中的“www”代表什么？)",
+    "options": [
+      "World Wide Web (万维网)",
+      "Wide World Web (广域网)",
+      "Web World Wide (网际网)",
+      "World Web Wide (全球网)"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Trends & Tech - “Cloud storage” mainly means your data is stored? (55 趋势与科技 - “云存储”主要意味着你的数据存储在？)",
+    "options": [
+      "Only on your phone (仅在手机上)",
+      "On physical paper (在实体纸上)",
+      "On remote servers accessed via the internet (通过互联网访问的远程服务器上)",
+      "On CDs (在光盘上)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Trends & Tech - What is “streaming”? (56 趋势与科技 - “流媒体”是什么？)",
+    "options": [
+      "Printing video (打印视频)",
+      "Downloading movies to DVD (下载电影到DVD)",
+      "Playing media over the internet in real time (通过互联网实时播放媒体)",
+      "Editing audio (编辑音频)"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Trends & Tech - In online communication, what does “LOL” stand for? (57 趋势与科技 - 在线交流中“LOL”代表什么？)",
+    "options": [
+      "Lots of Love (许多爱)",
+      "Laughing Out Loud (大声笑)",
+      "Look Out Later (稍后留意)",
+      "Line of Life (生命线)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Trends & Tech - A QR code is scanned using? (58 趋势与科技 - 二维码使用什么扫描？)",
+    "options": [
+      "A hammer (锤子)",
+      "A camera (相机)",
+      "A printer (打印机)",
+      "A scanner pen (扫描笔)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Logic - A train leaves at 13:45 and arrives at 16:10. How long is the journey? (59 逻辑 - 火车13:45出发，16:10到达，旅程多长时间？)",
+    "options": [
+      "2h 15m (2小时15分钟)",
+      "2h25m (2小时25分钟)",
+      "2h30m (2小时30分钟)",
+      "3h25m (3小时25分钟)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Logic - If today is Wednesday, what day will it be in 10 days? (60 逻辑 - 如果今天是周三，10天后是周几？)",
+    "options": [
+      "Friday (周五)",
+      "Saturday (周六)",
+      "Sunday (周日)",
+      "Monday (周一)"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Logic - The pattern of odd numbers:1,3,5,7,… What is the 10th term?（61 逻辑 - 奇数序列：1,3,5,7,… 第10项是什么？）",
+    "options": [
+      "17（十七）",
+      "19（十九）",
+      "21（二十一）",
+      "23（二十三）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Logic - A code replaces A=1,B=2,C=3,etc. The code3-1-20 spells:（62 逻辑 - 密码替换规则：A=1，B=2，C=3等。密码3-1-20拼写的是？）",
+    "options": [
+      "BAT（蝙蝠）",
+      "ACT（行动）",
+      "CAT（猫）",
+      "TAC（塔科）"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Logic - A clock shows9:15. Where is the minute hand pointing?（63 逻辑 - 时钟显示9:15，分针指向哪里？）",
+    "options": [
+      "3（3点位置）",
+      "6（6点位置）",
+      "9（9点位置）",
+      "12（12点位置）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Logic - A palindrome reads the same forwards and backwards. Which is a palindrome?（64 逻辑 - 回文是指正读反读都相同的词或数字。哪个是回文？）",
+    "options": [
+      "1231（1231）",
+      "1221（1221）",
+      "1321（1321）",
+      "1241（1241）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "General Knowledge - Which organ in the body filters blood and makes urine?（65 常识 - 身体中哪个器官过滤血液并产生尿液？）",
+    "options": [
+      "Heart（心脏）",
+      "Lungs（肺）",
+      "Kidneys（肾脏）",
+      "Liver（肝脏）"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "General Knowledge - How many strings does a standard guitar have?（66 常识 - 标准吉他有几根弦？）",
+    "options": [
+      "4（四）",
+      "5（五）",
+      "6（六）",
+      "7（七）"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "General Knowledge - In chess, which piece can move in an “L” shape?（67 常识 - 国际象棋中哪个棋子可以走“L”形？）",
+    "options": [
+      "King（国王）",
+      "Queen（皇后）",
+      "Rook（车）",
+      "Knight（骑士）"
+    ],
+    "correct": 3
+  },
+  {
+    "question": "General Knowledge - Which planet has rings that are clearly visible through a small telescope?（68 常识 - 哪个行星的光环可以通过小型望远镜清晰看到？）",
+    "options": [
+      "Mars（火星）",
+      "Venus（金星）",
+      "Saturn（土星）",
+      "Mercury（水星）"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "General Knowledge - Which scientist developed the theory of relativity?（69 常识 - 哪个科学家提出了相对论？）",
+    "options": [
+      "Newton（牛顿）",
+      "Einstein（爱因斯坦）",
+      "Darwin（达尔文）",
+      "Tesla（特斯拉）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "General Knowledge - Which famous ship sank on its first voyage in1912?（70 常识 - 哪艘著名的船在1912年首次航行时沉没？）",
+    "options": [
+      "Lusitania（卢西塔尼亚号）",
+      "Titanic（泰坦尼克号）",
+      "Bismarck（俾斯麦号）",
+      "Mayflower（五月花号）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Science - Which gas do plants absorb for photosynthesis?（71 科学 - 植物光合作用吸收哪种气体？）",
+    "options": [
+      "Oxygen（氧气）",
+      "Carbon Dioxide（二氧化碳）",
+      "Nitrogen（氮气）",
+      "Hydrogen（氢气）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Math - What is the area of a circle with radius 3cm?（72 数学 - 半径3厘米的圆面积是多少？）",
+    "options": [
+      "9π cm²（9π平方厘米）",
+      "6π cm²（6π平方厘米）",
+      "3π cm²（3π平方厘米）",
+      "12π cm²（12π平方厘米）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the probability of rolling a 6 on a fair dice?（73 数学 - 公平骰子掷出6的概率是多少？）",
+    "options": [
+      "1/6（六分之一）",
+      "1/3（三分之一）",
+      "1/2（二分之一）",
+      "2/3（三分之二）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which organ controls the body's functions?（74 科学 - 哪个器官控制身体功能？）",
+    "options": [
+      "Heart（心脏）",
+      "Brain（大脑）",
+      "Liver（肝脏）",
+      "Kidney（肾脏）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Math - Solve for x: 3x-5=10（75 数学 - 解方程：3x-5=10）",
+    "options": [
+      "5（五）",
+      "6（六）",
+      "7（七）",
+      "8（八）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the slope of a line passing through (0,0) and (2,4)?（76 数学 - 过点(0,0)和(2,4)的直线斜率是多少？）",
+    "options": [
+      "2（二）",
+      "1（一）",
+      "0.5（零点五）",
+      "3（三）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which planet is closest to the Sun?（77 科学 - 哪个行星离太阳最近？）",
+    "options": [
+      "Mercury（水星）",
+      "Venus（金星）",
+      "Earth（地球）",
+      "Mars（火星）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the sum of the first 5 prime numbers?（78 数学 - 前5个质数的和是多少？）",
+    "options": [
+      "28（二十八）",
+      "29（二十九）",
+      "30（三十）",
+      "31（三十一）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the volume of a cube with side length 4cm?（79 数学 - 边长4厘米的立方体体积是多少？）",
+    "options": [
+      "64 cm³（64立方厘米）",
+      "32 cm³（32立方厘米）",
+      "16 cm³（16立方厘米）",
+      "8 cm³（8立方厘米）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the median of 1,3,5,7,9?（80 数学 - 序列1,3,5,7,9的中位数是多少？）",
+    "options": [
+      "5（五）",
+      "4（四）",
+      "6（六）",
+      "3（三）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - Simplify: (a²b³)×(a³b²)（81 数学 - 化简：(a²b³)×(a³b²)）",
+    "options": [
+      "a⁵b⁵（a的五次方b的五次方）",
+      "a⁶b⁶（a的六次方b的六次方）",
+      "a⁵b⁶（a的五次方b的六次方）",
+      "a⁶b⁵（a的六次方b的五次方）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "History - Who invented the light bulb?（82 历史 - 谁发明了灯泡？）",
+    "options": [
+      "Thomas Edison（托马斯·爱迪生）",
+      "Alexander Graham Bell（亚历山大·格雷厄姆·贝尔）",
+      "Nikola Tesla（尼古拉·特斯拉）",
+      "Albert Einstein（阿尔伯特·爱因斯坦）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which part of the plant absorbs water?（83 科学 - 植物哪个部分吸收水分？）",
+    "options": [
+      "Roots（根）",
+      "Leaves（叶）",
+      "Stem（茎）",
+      "Flowers（花）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Culture - Which sport uses a ball and a bat?（84 文化 - 哪种运动使用球和球棒？）",
+    "options": [
+      "Baseball（棒球）",
+      "Soccer（足球）",
+      "Basketball（篮球）",
+      "Tennis（网球）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which instrument measures temperature?（85 科学 - 哪种仪器测量温度？）",
+    "options": [
+      "Thermometer（温度计）",
+      "Barometer（气压计）",
+      "Hygrometer（湿度计）",
+      "Anemometer（风速计）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the LCM of 4 and 6?（86 数学  4和6的最小公倍数是多少？）",
+    "options": [
+      "12（十二）",
+      "8（八）",
+      "16（十六）",
+      "24（二十四）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "History - Which country hosted the 2008 Summer Olympics?（87 历史 - 哪个国家举办了2008年夏季奥运会？）",
+    "options": [
+      "China（中国）",
+      "USA（美国）",
+      "Japan（日本）",
+      "Brazil（巴西）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the value of 5!（88 数学 5!的值是多少？）",
+    "options": [
+      "120（一百二十）",
+      "60（六十）",
+      "24（二十四）",
+      "15（十五）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which force pulls objects towards the Earth?（89 科学 - 哪种力将物体拉向地球？）",
+    "options": [
+      "Gravity（重力）",
+      "Friction（摩擦力）",
+      "Magnetism（磁力）",
+      "Electricity（电力）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Culture - Which food is traditional in Italy?（90 文化 - 哪种食物是意大利传统食物？）",
+    "options": [
+      "Pizza（披萨）",
+      "Sushi（寿司）",
+      "Taco（塔可）",
+      "Curry（咖喱）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Math - What is the area of a rectangle with length 5cm and width 3cm?（91 数学 - 长5厘米宽3厘米的矩形面积是多少？）",
+    "options": [
+      "15 cm²（15平方厘米）",
+      "10 cm²（10平方厘米）",
+      "20 cm²（20平方厘米）",
+      "12 cm²（12平方厘米）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which animal is a mammal?（92 科学 - 哪种动物是哺乳动物？）",
+    "options": [
+      "Dog（狗）",
+      "Fish（鱼）",
+      "Bird（鸟）",
+      "Insect（昆虫）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Science - Which part of the cell contains DNA?（93 科学 - 细胞哪个部分包含DNA？）",
+    "options": [
+      "Nucleus（细胞核）",
+      "Cytoplasm（细胞质）",
+      "Cell Membrane（细胞膜）",
+      "Mitochondria（线粒体）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Culture - Which dance is traditional in India?（94 文化 - 哪种舞蹈是印度传统舞蹈？）",
+    "options": [
+      "Bharatanatyam（婆罗多舞）",
+      "Ballet（芭蕾）",
+      "Tap（踢踏舞）",
+      "Hip-hop（嘻哈舞）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Culture - Which traditional Chinese food is commonly eaten during Spring Festival?（95 文化 - 中国春节期间常吃的传统食物是什么？）",
+    "options": [
+      "Dumplings（饺子）",
+      "Noodles（面条）",
+      "Rice（米饭）",
+      "Buns（包子）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Kpop - Which Korean group released the song \"Dynamite\"?（97 Kpop - 哪个韩国组合发行了歌曲《Dynamite》？）",
+    "options": [
+      "BTS",
+      "BLACKPINK",
+      "EXO",
+      "TWICE"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Chinese Culture - Which dynasty built the Great Wall of China?（98 中国文化 - 中国长城是哪个朝代建造的？）",
+    "options": [
+      "Qin Dynasty（秦朝）",
+      "Han Dynasty（汉朝）",
+      "Ming Dynasty（明朝）",
+      "Tang Dynasty（唐朝）"
+    ],
+    "correct": 2
+  },
+  {
+    "question": "Thai Culture - What is the name of Thailand's New Year festival?（99 泰国文化 - 泰国的新年节日叫什么？）",
+    "options": [
+      "Diwali（排灯节）",
+      "Songkran（宋干节）",
+      "Loy Krathong（水灯节）",
+      "Chinese New Year（春节）"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Chinese Culture - Where is the giant panda's natural habitat in China?（101 中国文化 - 大熊猫在中国的自然栖息地在哪里？）",
+    "options": [
+      "Sichuan（四川）",
+      "Beijing（北京）",
+      "Shanghai（上海）",
+      "Guangdong（广东）"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Thai Culture - What is Thailand's national flower?（102 泰国文化 - 泰国的国花是什么？）",
+    "options": [
+      "Rose（玫瑰）",
+      "Lotus（莲花）",
+      "Orchid（兰花）",
+      "Golden Shower Tree（金链花）"
+    ],
+    "correct": 3
+  },
+  {
+    "question": "Kpop - What does \"MAMA\" stand for in the context of Korean music awards?（103 Kpop - 韩国音乐奖项中的\"MAMA\"代表什么？）",
+    "options": [
+      "Music Awards for Asian Musicians",
+      "Mnet Asian Music Awards",
+      "Korean Music Awards",
+      "Global Music Awards"
+    ],
+    "correct": 1
+  },
+  {
+    "question": "Chinese Culture - Which ancient Chinese writing system is the earliest known?（104 中国文化 - 中国已知最早的文字系统是什么？）",
+    "options": [
+      "Oracle Bone Script（甲骨文）",
+      "Bronze Script（金文）",
+      "Seal Script（篆书）",
+      "Cursive Script（草书）"
+    ],
     "correct": 0
   }
 ]
