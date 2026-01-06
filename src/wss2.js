@@ -250,9 +250,10 @@ function normalizeImages(list, targetCount = 16) {
 }
 
 async function loadInitialAssets() {
+    const baseUrl = import.meta.env.BASE_URL || "/";
     const [questions, images] = await Promise.all([
-        loadJsonAsset("/data/questions.json"),
-        loadJsonAsset("/data/images.json"),
+        loadJsonAsset(`${baseUrl}data/questions.json`),
+        loadJsonAsset(`${baseUrl}data/images.json`),
     ]);
 
     if (Array.isArray(questions) && questions.length >= 16) {
@@ -263,7 +264,14 @@ async function loadInitialAssets() {
     }
 
     BASE_POOL = JSON.parse(JSON.stringify(MASTER_POOL));
-    UPLOADED_IMAGES = normalizeImages(images, 16);
+    UPLOADED_IMAGES = normalizeImages(images, 16).map((img) => resolveAssetUrl(img, baseUrl));
+}
+
+function resolveAssetUrl(url, baseUrl) {
+    if (!url) return url;
+    if (/^(?:https?:|data:|blob:)/.test(url)) return url;
+    if (url.startsWith("/")) return `${baseUrl}${url.slice(1)}`;
+    return `${baseUrl}${url}`;
 }
 
 function buildProgressState() {
