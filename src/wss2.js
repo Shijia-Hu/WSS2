@@ -156,7 +156,9 @@ let lastFeedbackMessage = "";
 let lastFeedbackColor = "";
 let lastGatherColor = null;
 const STORAGE_KEY = "wss2-progress";
+const QUESTIONS_HASH_KEY = "wss2-questions-hash";
 let pendingRestoreState = null;
+let shouldClearProgress = false;
 
 function getRemainingQuestions() {
     const picked = new Set(SELECTED_16.map(q => q.question));
@@ -197,10 +199,21 @@ function normalizeImages(list, targetCount = 16) {
     return output;
 }
 
+function withCacheBust(path) {
+    const url = new URL(path, window.location.href);
+    url.searchParams.set("v", Date.now().toString());
+    return url.toString();
+}
+
+function computeQuestionsHash(list) {
+    if (!Array.isArray(list)) return "";
+    return list.map(item => item.question).join("|");
+}
+
 async function loadInitialAssets() {
     const [questions, images] = await Promise.all([
-        loadJsonAsset("/data/questions.json"),
-        loadJsonAsset("/data/images.json"),
+        loadJsonAsset(withCacheBust("data/questions.json")),
+        loadJsonAsset(withCacheBust("data/images.json")),
     ]);
 
     if (Array.isArray(questions) && questions.length >= 16) {
@@ -214,6 +227,17 @@ async function loadInitialAssets() {
 
     BASE_POOL = JSON.parse(JSON.stringify(MASTER_POOL));
     UPLOADED_IMAGES = normalizeImages(images, 16);
+
+    const nextHash = computeQuestionsHash(MASTER_POOL);
+    try {
+        const prevHash = localStorage.getItem(QUESTIONS_HASH_KEY);
+        if (prevHash && prevHash !== nextHash) {
+            shouldClearProgress = true;
+        }
+        localStorage.setItem(QUESTIONS_HASH_KEY, nextHash);
+    } catch (err) {
+        console.warn("Failed to store question hash", err);
+    }
 }
 
 function buildProgressState() {
@@ -845,6 +869,11 @@ function renderQuizFromState(pick, timerState, showFeedback, shouldRunTimer, isP
 
 async function initApp() {
     await loadInitialAssets();
+    if (shouldClearProgress) {
+        clearProgress();
+        pendingRestoreState = null;
+        shouldClearProgress = false;
+    }
     pendingRestoreState = parseSavedProgress();
     if (pendingRestoreState) {
         showRestorePrompt();
