@@ -53,6 +53,7 @@ const COMMAND_HANDLERS = {
     TEAMS_INTRO_NEXT: () => teamIntro.next(),
     TEAMS_INTRO_STOP: () => teamIntro.stop(),
     TEAMS_SHOW: (payload) => replayOneTeam(payload.teamId, payload.auto !== false, payload.memberDelay, payload.teamHold),
+    MAIN_VISUAL: () => director.showMainVisual(),
     ACT_INTRO: (payload) => director.showActIntro(payload.actId),
     ROUND_INTRO: (payload) => director.showRoundIntro(payload.roundId),
     SEAL: (payload) => director.showSeal(payload.roundId, payload.winner || "本轮胜队"),

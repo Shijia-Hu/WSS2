@@ -1,5 +1,12 @@
 // src/story/config.js
 export const STORY = {
+    mainVisual: {
+        title: "Who’s Still Standing?",
+        subtitle: "主持人串词主视觉",
+        kicker: "Wicked × Good",
+        hint: "Host Overlay Ready",
+        backgroundImage: "assets/bg_full.webp"
+    },
     processes: [
         {
             id: "p1",

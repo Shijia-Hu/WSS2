@@ -92,6 +92,7 @@ document.body.addEventListener("click", (e) => {
     if (cmd === "introStop") return send("TEAMS_INTRO_STOP");
 
     if (cmd === "act1") return send("ACT_INTRO", { actId: "act1" });
+    if (cmd === "mainVisual") return send("MAIN_VISUAL");
     if (cmd === "r1") return send("ROUND_INTRO", { roundId: "r1" });
     if (cmd === "r2") return send("ROUND_INTRO", { roundId: "r2" });
     if (cmd === "r3") return send("ROUND_INTRO", { roundId: "r3" });

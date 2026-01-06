@@ -71,9 +71,21 @@ export function createDirector() {
         });
     }
 
+    function showMainVisual() {
+        const mainVisual = STORY.mainVisual;
+        overlay.show({
+            mode: "main",
+            title: mainVisual.title,
+            subtitle: mainVisual.subtitle || "",
+            kicker: mainVisual.kicker || "",
+            hint: mainVisual.hint || "",
+            backgroundImage: mainVisual.backgroundImage ? baseUrl(mainVisual.backgroundImage) : ""
+        });
+    }
+
     function hideOverlay() {
         overlay.hide();
     }
 
-    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal, hideOverlay };
+    return { showActIntro, showProcess, showRoundIntro, showSeal, showFinalReveal, showMainVisual, hideOverlay };
 }
