@@ -80,6 +80,7 @@ export function createDirector() {
 
     function hideOverlay() {
         overlay.hide();
+        mainVisualOverlay.hide();
     }
 
     function showOverlay(payload) {
