@@ -476,6 +476,43 @@
             font-family: var(--font-display);
         }
 
+        .pause-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 18px;
+            border: 1px solid rgba(197, 160, 89, 0.45);
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.45);
+            color: var(--oz-gold);
+            font-family: var(--font-display);
+            font-size: 10px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        .pause-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
+        }
+
+        .pause-btn[aria-pressed="true"] {
+            background: rgba(248, 150, 194, 0.2);
+            border-color: rgba(248, 150, 194, 0.6);
+        }
+
+        .quiz-body {
+            transition: filter 0.35s ease, opacity 0.35s ease;
+        }
+
+        .quiz-body.is-paused {
+            filter: blur(10px);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
         .magic-orb-btn {
             margin: 0 auto 28px;
             width: 72px;
